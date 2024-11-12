@@ -1,0 +1,89 @@
+:root 
+{
+    --HeaderMargins: 128px;
+
+    --Primary: #44D62C;
+    --NeutralColor_0: black;
+    --NeutralColor_1: #111111;
+    --NeutralColor_2: #555555;
+    --NeutralColor_3: rgb(187, 187, 187);
+    --NeutralColor_4: white;
+
+    --NeutralBackground: #222;
+    --NeutralColorBodyText: #999;
+
+    --titleFont: "Open Sans";
+    --textFont: "Onest";
+}
+
+body 
+{
+    background-color: var(--NeutralBackground);
+    color: var(--NeutralColor_4);
+    font-family: var(--textFont);
+
+    margin: 0;
+}
+
+main
+{
+    margin: 8px;
+}
+
+h1
+{
+    color: var(--NeutralColor_4);
+    font-size: xx-large;
+}
+
+h2
+{
+    color: var(--NeutralColor_4);
+    font-size: x-large;
+}
+
+h3
+{
+    color: var(--NeutralColor_4);
+    font-size: large;
+    font-weight: 400;
+}
+
+.bg-dark
+{
+    background-color: var(--NeutralColor_0) !important;
+}
+
+.text-primary
+{
+    color: var(--NeutralColor_4) !important;
+}
+
+.text-secondary
+{
+    color: var(--NeutralColor_3) !important;
+}
+
+.border-primary
+{
+    border-color: var(--Primary) !important;
+}
+
+.border-bottom
+{
+    border-bottom: var(--Primary) solid 1px !important;
+}
+
+.border-top
+{
+    border-top: var(--Primary) solid 1px !important;
+}
+
+.EsloganMarca 
+{
+    font-family: var(--titleFont);
+
+    text-align: right;
+    color: #44D62C;
+    font-weight: 300;
+}
