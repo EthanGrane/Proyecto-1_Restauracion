@@ -1,14 +1,16 @@
 <header class="bg-dark border-bottom border-primary">
     <div class="container d-flex align-items-center justify-content-between py-2">
         <!-- Logo -->
-        <img src="./Views/Resources/logo.png" alt="Logo" class="img-fluid" style="width: 48px; height: 48px;">
+         <a href="./">
+             <img src="./Views/Resources/logo.png" alt="Logo" style="width: 48px; height: 48px;">
+        </a>
 
         <!-- Menú de navegación Desktop -->
         <nav id="navbarMenu" class="collapse navbar-collapse d-lg-flex flex-grow-1 justify-content-between">
             <a class="NavLink nav-link mx-3 text-secondary" href="#">CARTA</a>
-            <a class="NavLink nav-link mx-3 text-secondary" href="#">PRODUCTOS</a>
-            <a class="NavLink nav-link mx-3 text-secondary" href="#">RESTAURANTS</a>
-            <a class="NavLink nav-link mx-3 text-secondary" href="#">ABOUT-US</a>
+            <a class="NavLink nav-link mx-3 text-secondary" href="/Products">PRODUCTOS</a>
+            <a class="NavLink nav-link mx-3 text-secondary" href="#">RESTAURANTES</a>
+            <a class="NavLink nav-link mx-3 text-secondary" href="#">SOBRE NOSOTROS</a>
         </nav>
         
         <!-- Iconos del header -->

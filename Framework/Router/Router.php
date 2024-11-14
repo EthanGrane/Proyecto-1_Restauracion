@@ -1,22 +1,30 @@
 <?php
 
+include_once("Framework/Router/Router_List.php");
+
 /*
  *  Enruta el url al controlador y action correspondiente.
  */
 
 class Router
 {
-    static $Routes =
-    [
-        "/" => ["controller" => "Main","action" => "index"],
-    ];
+    static bool $DebugMode = true;
 
     public static function GetView($url)
     {
         $parsedUrl = parse_url($url);
         $view = null;
-        if(isset(self::$Routes[$parsedUrl['path']]))
-            $view = self::$Routes[$parsedUrl['path']];   
+        if(isset(Router_List::$Routes[$parsedUrl['path']]))
+        {
+            $view = Router_List::$Routes[$parsedUrl['path']];   
+        }
+        else
+        {
+            if(self::$DebugMode)
+            {
+                echo "Route not exist.";
+            }
+        }
 
         $query = [];
         if (isset($parsedUrl['query'])) 
