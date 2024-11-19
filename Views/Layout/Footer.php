@@ -1,5 +1,6 @@
 <footer>
     <div class="footerContentTop d-none d-md-flex">
+        
         <div class="footerSection">
             <ul>
                 <li>
@@ -9,7 +10,7 @@
                 <li><a class="footerLink" href="#">Crispy-19 Coffee</a></li>
                 <li><a class="footerLink" href="#">Crispy-19 Bowls</a></li>
                 <li><a class="footerLink" href="#">Crispy-19 Chopsticks</a></li>
-                <li><a class="footerLink" href="#">Localiza tu tienda Crispy-19</a></li>
+                <li><a class="footerLink" href="https://maps.app.goo.gl/YuFhmZyeQdmhK3MR9">Localiza tu tienda Crispy-19</a></li>
             </ul>
         </div>
 
@@ -44,7 +45,7 @@
 
         <div class="footerSection">
             <h3 class="EsloganMarca">
-                FOR EATERS. BY EATERS.™
+                FOR GAMERS. BY GAMERS.™
             </h3>
         </div>
     </div>

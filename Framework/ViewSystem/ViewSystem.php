@@ -2,7 +2,7 @@
 
 class ViewSystem
 {
-    public const TEMPLATE_PATH = "./Framework/ViewSystem/ViewTemplate.php";
+    public const TEMPLATE_PATH = "Views\Layout\Templates\Template_View.php";
     public const VIEW_FOLDER = "Views/";
 
     public static function PrintView($viewName)
