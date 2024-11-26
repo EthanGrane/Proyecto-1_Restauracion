@@ -21,19 +21,34 @@ catch(Exception $e)
     <h2>PLATOS PRINCIPALES</h2>
     <h3>Join the hype train with the hottest products in our arsenal</h3>
 
+    <div class="container-fluid row justify-content-center" style="width: auto;">
+
     <?php
-    $products = $dao->GetAllProducts();
+    $products = $dao->GetAllProductsByType("MainDish");
     
-    foreach($products as $product)
-    {
-        ViewSystem::PrintProductCard($product["name"],"Description","");
-    }
+    for ($i=0; $i < 5; $i++) { 
+        foreach($products as $product)
+        {
+            ViewSystem::PrintProductCard($product["name"],$product["description"],$product["image"]);
+        }    }
+
     ?>
+
+    </div>
 
     <div class="SmallSpace"> </div>
 
     <h2>BEBIDAS</h2>
     <h3>Join the hype train with the hottest products in our arsenal</h3>
+
+    <?php
+    $products = $dao->GetAllProductsByType("Drink");
+    
+    foreach($products as $product)
+    {
+        ViewSystem::PrintProductCard($product["name"],$product["description"],$product["image"]);
+    }
+    ?>
 </main>
 
 <?php

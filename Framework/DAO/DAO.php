@@ -49,9 +49,19 @@ class DAO
         return $data;
     }
 
-    public function GetAllProducts()
+    public function GetAllProductsByType($type_param)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Products LIMIT 100");
+        static $WHITELIST = ["MainDish", "Drink"];
+
+        if (in_array($type_param, $WHITELIST)) {
+            $type = $type_param;
+        } else {
+            $type = "MainDish";
+        }
+
+
+        $stmt = $this->conn->prepare("SELECT * FROM Products WHERE state = 0 AND type = ? LIMIT 100");
+        $stmt->bind_param("s", $type);
         $stmt->execute();
 
         $result = $stmt->get_result();
