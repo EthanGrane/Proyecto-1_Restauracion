@@ -6,7 +6,7 @@ class ProductController
 {
     public function view()
     {
-        ViewSystem::PrintView("Products");
+        ViewSystem::PrintView("Products", "Menu");
     }
 }
 

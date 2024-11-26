@@ -14,3 +14,16 @@
 <link rel="stylesheet" href=".\Views\Styles\FooterStyles.css">
 <link rel="stylesheet" href=".\Views\Styles\MainCard.css">
 <link rel="stylesheet" href=".\Views\Styles\HalfCard.css">
+
+<?php
+if (empty($title)) 
+{
+    $title = "";
+}
+else
+{
+    $title = " - " . $title;
+}
+?>
+
+<title> Cripsy-19 <?= $title ?> </title>

@@ -1,12 +1,9 @@
 <?php
 include_once("Framework\DAO\DAO.php");
 include_once("Framework\ViewSystem\ViewSystem.php");
-try
-{
+try {
     $dao = new DAO();
-}
-catch(Exception $e)
-{
+} catch (Exception $e) {
     echo $e;
     $dao = null;
 }
@@ -23,16 +20,15 @@ catch(Exception $e)
 
     <div class="container-fluid row justify-content-center" style="width: auto;">
 
-    <?php
-    $products = $dao->GetAllProductsByType("MainDish");
-    
-    for ($i=0; $i < 5; $i++) { 
-        foreach($products as $product)
-        {
-            ViewSystem::PrintProductCard($product["name"],$product["description"],$product["image"]);
-        }    }
+        <?php
+        $products = $dao->GetAllProductsByType("MainDish");
 
-    ?>
+        foreach ($products as $product) 
+        {
+            ViewSystem::PrintProductCard($product["name"], $product["description"],$product["type"]);
+        }
+
+        ?>
 
     </div>
 
@@ -41,14 +37,18 @@ catch(Exception $e)
     <h2>BEBIDAS</h2>
     <h3>Join the hype train with the hottest products in our arsenal</h3>
 
-    <?php
-    $products = $dao->GetAllProductsByType("Drink");
-    
-    foreach($products as $product)
-    {
-        ViewSystem::PrintProductCard($product["name"],$product["description"],$product["image"]);
-    }
-    ?>
+    <div class="container-fluid row justify-content-center" style="width: auto;">
+
+        <?php
+        $products = $dao->GetAllProductsByType("Drink");
+
+        foreach ($products as $product) 
+        {
+            ViewSystem::PrintProductCard($product["name"], $product["description"], $product["type"]);
+        }
+        ?>
+
+    </div>
 </main>
 
 <?php
