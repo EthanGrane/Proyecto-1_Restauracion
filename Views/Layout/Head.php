@@ -9,6 +9,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" >
 
 <!-- Styles -->
-<link rel="stylesheet" href="./Views/Styles/HeaderStyles.css">
-<link rel="stylesheet" href="./Views/Styles/MainStyles.css">
-<link rel="stylesheet" href="./Views/Styles/FooterStyles.css">
+<link rel="stylesheet" href=".\Views\Styles\MainStyles.css">
+<link rel="stylesheet" href=".\Views\Styles\HeaderStyles.css">
+<link rel="stylesheet" href=".\Views\Styles\FooterStyles.css">
+<link rel="stylesheet" href=".\Views\Styles\MainCard.css">
+<link rel="stylesheet" href=".\Views\Styles\HalfCard.css">

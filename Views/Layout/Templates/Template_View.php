@@ -1,3 +1,9 @@
+<?php
+
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,10 +16,8 @@
 <body>
 
     <?php include_once("Views/Layout/Header.php"); ?>
-
-    <main>
-        <?php include_once($viewPath); ?>
-    </main>
+    
+    <?php include_once($viewPath); ?>
     
 </body>
 

@@ -1,0 +1,133 @@
+.MainCard 
+{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
+    
+    background-repeat: no-repeat;
+
+    padding: 0 20px;
+    padding-top: 32px;
+}
+
+.MainTitle
+{
+    color: var(--Primary);
+}
+
+.CardTitle
+{
+    text-shadow: black 0px 1px 5px;
+
+    font-size: 125px;
+
+    text-align: center;
+
+    font-weight: 700;
+
+    margin: 0;
+}
+
+.CardSubTitle
+{
+    font-size: 24px;
+
+    text-align: center;
+
+    font-weight: 100;
+
+    margin: 0;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.CardLink {
+    font-size: 24px;
+    text-align: center;
+    text-decoration: none;
+
+    color: white;
+
+    font-weight: 300;
+    padding: 16px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.CardLink span {
+    margin-left: 8px;
+}
+
+.CardLink_Icon {
+    color: var(--Primary);
+    margin-left: 8px; /* Añade un pequeño espacio entre el texto y el icono */
+}
+
+.CardLink:hover
+{
+    color: white;
+}
+
+.CardLink_Text:hover
+{
+    color: white;
+    text-decoration: underline;
+}
+
+.ProductCard
+{
+    background-color: var(--NeutralColor_1);
+
+    width: 254px;
+    height: 312px;
+
+    padding: 16px;
+
+    border-bottom: 1px solid var(--Primary);
+}
+
+.ProductImage
+{
+    height: 128px;
+
+    overflow: hidden; 
+}
+
+.ProductImage img
+{
+    display: block;
+    height: 100%;
+    width: auto;
+
+    margin: auto;
+}
+
+.ProductName
+{
+    font-size: large;
+    font-weight: 600;
+
+    margin: 0;
+}
+
+.ProductDescription
+{
+    margin: 0;
+
+    font-weight: 200;
+
+    color: var(--NeutralColor_2);
+}
+
+.ProductLink
+{
+    font-weight: 100;
+    color: var(--Primary);
+}

@@ -1,0 +1,21 @@
+.HalfCardContainer {
+    display: flex;
+    flex-direction: row;
+
+    height: auto;
+    width: 100%;
+}
+
+.HalfCard {
+    width: 50%;
+    height: 720px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-size: cover;
+    background-position-x: center;
+    background-position-y: center;
+
+}

@@ -11,11 +11,9 @@ foreach($data['subtitles'] as $subtitle)
     echo '<p class="CardSubTitle">'. $subtitle . '</p>';
 }
 ?>
-    
 
     <a class="CardLink" href="#">
     <span class="CardLink_Text">Ver carta</span><span class="CardLink_Icon">></span>
     </a>
-
 
 </div>

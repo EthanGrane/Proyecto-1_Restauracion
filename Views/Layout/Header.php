@@ -1,4 +1,4 @@
-<header class="bg-dark border-bottom border-primary">
+<header class="border-bottom border-primary">
     <div class="container d-flex align-items-center justify-content-between py-2">
         <!-- Logo -->
          <a href="./">

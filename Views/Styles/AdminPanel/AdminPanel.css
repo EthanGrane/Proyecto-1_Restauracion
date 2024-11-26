@@ -1,0 +1,53 @@
+body
+{
+    font-family: "Onest";
+
+    background-color: #8D97AF;
+    margin: 0;
+}
+
+.AdminPanelBody
+{
+    background-color: #E8EBED;
+
+    height: 75vh;
+    width: 60%;
+
+    margin: auto;
+    margin-top: 64px;
+    padding: 32px;
+
+    border-radius: 32px;
+}
+
+.AdminPanelNav
+{
+    width: 33%;
+    margin: 0;
+
+    display: flex;
+    
+    justify-content: space-between;
+}
+
+.AdminPanelNav a
+{
+    color: rgb(11, 11, 11);
+    text-decoration: none;
+}
+
+.AdminPanelNav a:hover
+{
+    text-decoration: underline;
+}
+
+.selected
+{
+    text-decoration: underline;
+}
+
+
+.ListCard
+{
+    
+}
