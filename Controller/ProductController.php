@@ -8,6 +8,11 @@ class ProductController
     {
         ViewSystem::PrintView("Products", "Menu");
     }
+
+    public function buy()
+    {
+        ViewSystem::PrintView("Cart", "Cart");
+    }
 }
 
 ?>

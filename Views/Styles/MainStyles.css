@@ -27,7 +27,7 @@ body
 
 header
 {
-    background-color: var(--NeutralColor_1);   
+    background-color: black;   
 }
 
 main
@@ -59,6 +59,11 @@ h3
     background-color: var(--NeutralColor_0) !important;
 }
 
+.text-highlight
+{
+    color: var(--Primary) !important;
+}
+
 .text-primary
 {
     color: var(--NeutralColor_4) !important;
@@ -77,6 +82,11 @@ h3
 .border-bottom
 {
     border-bottom: var(--Primary) solid 1px !important;
+}
+
+.border-bottom-neutral
+{
+    border-bottom: var(--NeutralColor_2) solid 1px !important;
 }
 
 .border-top

@@ -4,7 +4,8 @@ class Router_List
     public static $Routes =
     [
         "/" =>                  ["controller" => "Main","action" => "index"],
-        "/Products" =>          ["controller" => "Product","action" => "view"],
+        "/Menu" =>          ["controller" => "Product","action" => "view"],
+        "/Cart" =>          ["controller" => "Product","action" => "buy"],
         
         /* ADMIN PANEL ROUTES */
         "/AdminPanel" =>        ["controller" => "Admin","action" => "index"],

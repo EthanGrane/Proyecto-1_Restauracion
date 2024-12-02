@@ -3,8 +3,9 @@ include_once("Framework\DAO\DAO.php");
 include_once("Framework\ViewSystem\ViewSystem.php");
 try {
     $dao = new DAO();
-} catch (Exception $e) {
-    echo $e;
+} 
+catch (Exception $e) 
+{
     $dao = null;
 }
 ?>
@@ -21,13 +22,14 @@ try {
     <div class="container-fluid row justify-content-center" style="width: auto;">
 
         <?php
-        $products = $dao->GetAllProductsByType("MainDish");
-
-        foreach ($products as $product) 
+        if ($dao != null) 
         {
-            ViewSystem::PrintProductCard($product["name"], $product["description"],$product["type"]);
-        }
+            $products = $dao->GetAllProductsByType("MainDish");
 
+            foreach ($products as $product) {
+                ViewSystem::PrintProductCard($product["name"], $product["description"], $product["type"]);
+            }
+        }
         ?>
 
     </div>
@@ -40,11 +42,13 @@ try {
     <div class="container-fluid row justify-content-center" style="width: auto;">
 
         <?php
-        $products = $dao->GetAllProductsByType("Drink");
-
-        foreach ($products as $product) 
+        if ($dao != null) 
         {
-            ViewSystem::PrintProductCard($product["name"], $product["description"], $product["type"]);
+            $products = $dao->GetAllProductsByType("Drink");
+
+            foreach ($products as $product) {
+                ViewSystem::PrintProductCard($product["name"], $product["description"], $product["type"]);
+            }
         }
         ?>
 
@@ -52,5 +56,6 @@ try {
 </main>
 
 <?php
-$dao->CloseConnection();
+if ($dao != null)
+    $dao->CloseConnection();
 ?>

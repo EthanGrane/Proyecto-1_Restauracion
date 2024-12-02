@@ -7,6 +7,7 @@ include_once("Views\Layout\Templates\MainCard_Data\MainCard_Data.php");
  */
 
  $data = MainCard_Data::GetDataByKey(key: "SpookyCola");
+ $link = "/Menu";
 include("Views\Layout\Templates\Template_MainCard.php");
 
 /*

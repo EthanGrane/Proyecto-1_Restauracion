@@ -19,6 +19,11 @@ class ViewSystem
 
         require("Views\Layout\Templates\Template_ProductCard.php");
     }
+
+    public static function PrintCartItem($data)
+    {
+        require("Views\Layout\Templates\Template_CartItem.php");
+    }
 }
 
 ?>

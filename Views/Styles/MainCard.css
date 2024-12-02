@@ -14,6 +14,8 @@
 
     padding: 0 20px;
     padding-top: 32px;
+
+    margin-bottom: 16px;
 }
 
 .MainTitle
@@ -25,7 +27,7 @@
 {
     text-shadow: black 0px 1px 5px;
 
-    font-size: 125px;
+    font-size: 8vw;
 
     text-align: center;
 
@@ -36,7 +38,7 @@
 
 .CardSubTitle
 {
-    font-size: 24px;
+    font-size: 2.5vw;
 
     text-align: center;
 
@@ -48,7 +50,7 @@
 }
 
 .CardLink {
-    font-size: 24px;
+    font-size: 1.5vw;
     text-align: center;
     text-decoration: none;
 
@@ -109,8 +111,12 @@
     width: auto;
 
     margin: auto;
+    transition: transform 0.1s ease;
 }
 
+.ProductImage img:hover {
+    transform: scale(0.9);
+}
 .ProductName
 {
     font-size: large;
@@ -135,4 +141,12 @@
 {
     font-weight: 100;
     color: var(--Primary);
+}
+
+.btn-secondary
+{
+    background-color: none !important;
+    background: none !important;
+    color: white !important;
+    border-width: 0 !important;
 }

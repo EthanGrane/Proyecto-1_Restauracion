@@ -1,0 +1,25 @@
+.CartContainer
+{
+    width: 100%;
+}
+
+.CartItem
+{
+    width: 100%;
+}
+
+.CartItem_Title
+{
+    font-size: 26px;
+}
+
+.CartItem_Description
+{
+    font-weight: 100;
+}
+
+.CartItem_Price
+{
+    font-size: 26px;
+    font-weight: 100 !important;
+}
