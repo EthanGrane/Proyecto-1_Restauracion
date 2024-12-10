@@ -11,7 +11,8 @@
         <?= $description ?>
     </p>
 
-    <a href="Cart/Add?id=<?=$id?>" class="ProductLink">
-        + Añadir al carrito
-    </a>
+    <form action="Cart/Add" method="POST" class="ProductForm">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <button class="bg-none" type="submit" class="ProductLink">+ Añadir al carrito</button>
+    </form>
 </div>

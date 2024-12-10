@@ -1,12 +1,21 @@
 <?php
+
 require_once("Framework\CookieHandler\CookieHandler.php");
+require_once("Framework/ViewSystem/ViewSystem.php");
 
 class CartController
 {
-    
-    public function Add($id)
+    public function view()
     {
-        CookieHandler::AddToCart((int)$id["id"]);
+        ViewSystem::PrintView("Cart");
+    }
+
+    public function Add()
+    {
+        var_dump($_POST["id"]);
+        $id = $_POST["id"];
+
+        CookieHandler::AddToCart($id);
         header("Location: /Menu");
     }
 

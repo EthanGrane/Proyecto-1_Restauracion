@@ -8,76 +8,88 @@ include_once("Framework/Router/Router_List.php");
 
 class Router
 {
-    static bool $DebugMode = true;
+    protected static bool $DebugMode = true;
 
-    public static function GetView($url)
+    public static function GetView(string $request, string $method)
     {
-        $parsedUrl = parse_url($url);
-        $view = null;
-        if(isset(Router_List::$Routes[$parsedUrl['path']]))
-        {
-            $view = Router_List::$Routes[$parsedUrl['path']];   
-        }
-        else
-        {
-            if(self::$DebugMode)
-            {
-                echo "Route not exist.";
+        $parsedUrl = parse_url($request);
+        $path = self::normalizePath($parsedUrl['path'] ?? '/');
+
+        // La ruta esta almacenada en Router_List.php ?
+        if (!isset(Router_List::$Routes[$path])) {
+            if (self::$DebugMode) {
+                echo "Route not exist: $path";
             }
+
+            return null;
+        }
+
+        $view = Router_List::$Routes[$path];
+        // El controller y el action existen para esta ruta?
+        if (!isset($view['controller']) || !isset($view['action'][$method])) {
+            if (self::$DebugMode) {
+                echo "Invalid controller or action for route: $path";
+            }
+
+            return null;
         }
 
         $query = [];
-        if (isset($parsedUrl['query'])) 
-        {
+        if (isset($parsedUrl['query'])) {
             parse_str($parsedUrl['query'], $query);
         }
-        
+
         return ["view" => $view, "query" => $query];
     }
 
-    public static function GetPage($view, $query = [])
-    {        
-        if($view == null)
-        {
+    private static function normalizePath(string $path): string
+    {
+        // Convertir a minúsculas todo y eliminar "/" extra
+        $path = strtolower($path);
+        $path = trim($path, '/');
+
+        return "/$path";
+    }
+
+    public static function GetPage(array $view, array $query = [])
+    {
+        if ($view === null) {
+            echo "View not found.";
             return;
         }
 
-        if(!isset($view["controller"]))
-        {
-            echo "Controller dosent exist.";
+        $controllerName = $view["controller"] . "Controller";
+
+        if (!file_exists("controller/$controllerName.php")) {
+            echo "Controller file not found: $controllerName.php";
+            return;
         }
-        else
-        {
-            $controller_name = $view["controller"] . "Controller";
-            include_once("controller/$controller_name.php");
 
-            if(class_exists($controller_name))
-            {
-                $controllerClass = new $controller_name();
+        include_once("controller/$controllerName.php");
 
-                if(isset($view["action"]) && method_exists($controllerClass,$view["action"]))
-                {
-                    $action = $view["action"];
-                }
-                else
-                {
-                    $action = "null";
-                }
+        if (!class_exists($controllerName)) {
+            echo "Controller class not found: $controllerName";
+            return;
+        }
 
-                if(count($query) != 0)
-                {
-                    $controllerClass->$action($query);
-                }
-                else
-                    $controllerClass->$action();
+        $controllerInstance = new $controllerName();
 
-            }
-            else
-            {
-                echo "Controller name dosent exist. $controller_name";
-            }
+        $httpMethod = $_SERVER['REQUEST_METHOD']; // Detectar método HTTP (GET, POST, etc.)
+        $action = $view["action"][$httpMethod] ?? null;
+
+        if ($action === null || !method_exists($controllerInstance, $action)) {
+            echo "Action not found for method: $httpMethod in controller: $controllerName";
+            return;
+        }
+
+        // Ejecutar el método del controlador con o sin parámetros
+        if (!empty($query)) {
+            $controllerInstance->$action($query);
+        } else {
+            $controllerInstance->$action();
         }
     }
+
 }
 
 ?>

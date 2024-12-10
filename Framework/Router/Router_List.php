@@ -1,28 +1,27 @@
 <?php
 class Router_List
 {
-    public static $Routes =
-    [
-        "/" =>                  ["controller" => "Main","action" => "index"],
+    public static $Routes = [
+        "/" => ["controller" => "Main", "action" => ["GET" => "index"]],
 
         /* Product Controller */
-        "/Menu" =>          ["controller" => "Product","action" => "view"],
-        "/Cart" =>          ["controller" => "Product","action" => "buy"],
+        "/menu" => ["controller" => "Product", "action" => ["GET" => "view"]],
         
         /* Cart Controller */
-        "/Cart/Add" =>          ["controller" => "Cart","action" => "Add"],
-        "/Cart/Remove" =>          ["controller" => "Cart","action" => "Remove"],
-        "/Cart/Clear" =>          ["controller" => "Cart","action" => "Clear"],
-        
-        /* User Contorller */
-        "/User" =>                  ["controller" => "User","action" => "View"],
-        "/User/Login" =>            ["controller" => "User","action" => "Log"],
-        "/User/Signin" =>           ["controller" => "User","action" => "Sign"],
+        "/cart" => ["controller" => "Cart", "action" => ["GET" => "view"]],
+        "/cart/add" => ["controller" => "Cart", "action" => ["POST" => "Add"]],
+        "/cart/remove" => ["controller" => "Cart", "action" => ["POST" => "Remove"]],
+        "/cart/clear" => ["controller" => "Cart", "action" => ["POST" => "Clear"]],
+
+        /* User Controller */
+        "/user" => ["controller" => "User", "action" => ["GET" => "view"]],
+        "/login" => ["controller" => "User", "action" => ["POST" => "login"]],
+        "/user/signin" => ["controller" => "User", "action" => ["POST" => "sign"]],
 
         /* ADMIN PANEL */
-        "/AdminPanel" =>        ["controller" => "Admin","action" => "index"],
-        "/AdminPanel/Users" =>        ["controller" => "Admin","action" => "users"],
-        "/api" =>               ["controller" => "Main","action" => "api"],
+        "/adminpanel" => ["controller" => "Admin", "action" => ["GET" => "index"]],
+        "/adminpanel/users" => ["controller" => "Admin", "action" => ["GET" => "users"]],
+        "/api" => ["controller" => "Main", "action" => ["GET" => "api"]],
     ];
 }
 ?>

@@ -9,8 +9,9 @@ class UserController
         ViewSystem::PrintView("User");
     }
 
-    public function Log()
+    public function Login()
     {
+        ViewSystem::PrintView("UserLogin");
     }
 
     public function Sign()

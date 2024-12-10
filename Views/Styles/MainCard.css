@@ -137,10 +137,29 @@
     overflow: hidden;
 }
 
+.ProductForm
+{
+    background: none;
+    border: none;
+}
+
+.ProductForm button
+{
+    background: none;
+    border: none;
+    color: var(--Primary) !important;
+    font-weight: 200;
+}
+
+.ProductForm button:hover
+{
+    text-decoration: underline;
+}
+
 .ProductLink
 {
-    font-weight: 100;
-    color: var(--Primary);
+    font-weight: 100 !important;
+    color: var(--Primary) !important;
 }
 
 .btn-secondary
