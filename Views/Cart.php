@@ -5,7 +5,7 @@ include_once("Framework\CookieHandler\CookieHandler.php");
 
 try {
     $cart = CookieHandler::GetCart();
-    
+
     $dao = new DAO();
     $cartData = $dao->GetProductsDataByIDs($cart);
     $dao->CloseConnection();
@@ -27,32 +27,56 @@ try {
     $dao = null;
 }
 ?>
+
 <main>
 
     <div class="d-flex justify-content-between align-items-center">
 
         <h1>My Cart</h1>
+
         <?php
-        if(count($cartItems) > 0)
-        {
-        ?>
-        <a class="btn btn-secondary" href="/Cart/Clear" style="border: 1px solid var(--Primary) !important;">
-            Vaciar Carrito
-        </a>
-        <?php
+        if (count($cartItems) > 0) {
+            ?>
+
+            <form action="Cart/Clear" method="POST">
+                <button class="btn btn-secondary" href="/Cart/Clear" style="border: 1px solid var(--Primary) !important;">
+                    Vaciar Carrito
+                </button>
+            </form>
+
+            <?php
         }
         ?>
+
     </div>
 
     <?php
     /*
     Print Products Data list
     */
-    for ($i = 0; $i < count($cartItems); $i++) {
-        ViewSystem::PrintCartItem($cartItems[$i]);
+    if (count($cartItems) > 0) {
+        for ($i = 0; $i < count($cartItems); $i++) {
+            ViewSystem::PrintCartItem($cartItems[$i]);
+        }
+    } else {
+        ?>
+
+        <div class="container mt-4">
+            <div class="row align-items-center border-bottom-neutral pb-3">
+
+                <!-- Nombre y descripción -->
+                <div class="w-100 d-flex justify-content-center">
+                    <a href="/Menu" class="btn btn-secondary">
+                        Ver Menu
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <?php
     }
     ?>
-
     <div class="container mt-4">
         <div class="row align-items-center pb-3 mt-4">
             <div class="col-8">
@@ -65,12 +89,11 @@ try {
 
                 <?php
                 $totalPrice = 0.0;
-                for ($i = 0; $i < count($cartItems); $i++) 
-                {
+                for ($i = 0; $i < count($cartItems); $i++) {
                     $totalPrice += $cartItems[$i]["price"];
                     echo "
                 <div class='d-flex justify-content-end'>
-                    <p>" . $cartItems[$i]['price'] ." €</p>
+                    <p>" . $cartItems[$i]['price'] . " €</p>
                 </div>
                 ";
                 }
@@ -80,7 +103,7 @@ try {
 
                 <div class="d-flex justify-content-between">
                     <p>Total:</p>
-                    <p><?=$totalPrice?>€</p>
+                    <p><?= $totalPrice ?>€</p>
                 </div>
             </div>
         </div>

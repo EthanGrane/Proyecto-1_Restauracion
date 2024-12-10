@@ -13,7 +13,17 @@
         </div>
 
         <!-- Precio -->
-        <div class="col-2 text-end">
+        <div class="col-1">
+            <form action="Cart/Remove" method="POST">
+                <input type="hidden" name="id" value="<?= $id ?>">
+                <button class="btn btn-secondary">
+                    Remove
+                </button>
+            </form>
+        </div>
+
+        <!-- Precio -->
+        <div class="col-1 text-end">
             <p class="mb-0 fw-bold CartItem_Price"><?=$price?> €</p>
         </div>
     </div>

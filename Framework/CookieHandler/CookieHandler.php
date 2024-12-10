@@ -30,19 +30,19 @@ class CookieHandler
     }
 
     #endregion
-    
+
     public static function AddToCart($productId)
     {
         $cart = self::GetCookie('user_cart') ?? [];
 
         $cartArray = $cart;
-        array_push($cartArray,$productId);
+        array_push($cartArray, $productId);
 
         var_dump($productId);
 
         self::CreateCookie('user_cart', $cartArray, 3600 * 24 * 7);
     }
-    
+
     public static function GetCart()
     {
         return self::GetCookie('user_cart') ?? [];
@@ -51,11 +51,17 @@ class CookieHandler
     public static function RemoveFromCart($productId)
     {
         $cart = self::GetCookie('user_cart') ?? [];
-        $cart = array_filter($cart, function ($id) use ($productId) {
-            return $id !== $productId;
-        });
+
+        $index = array_search($productId, $cart);
+
+        if ($index !== false) 
+        {
+            array_splice($cart, $index, 1);     // Busca 
+        }
+
         self::CreateCookie('user_cart', $cart, 3600 * 24 * 7); // 7 días
     }
+
 
     public static function ClearCart()
     {

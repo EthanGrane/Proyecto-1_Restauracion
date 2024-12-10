@@ -12,16 +12,17 @@ class CartController
 
     public function Add()
     {
-        var_dump($_POST["id"]);
         $id = $_POST["id"];
 
         CookieHandler::AddToCart($id);
         header("Location: /Menu");
     }
 
-    public function Remove($id)
+    public function Remove()
     {
-        CookieHandler::RemoveFromCart((int)$id);
+        $id = $_POST["id"];
+
+        CookieHandler::RemoveFromCart($id);
         header("Location: /Cart");
     }
 

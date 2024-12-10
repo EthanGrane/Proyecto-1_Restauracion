@@ -28,6 +28,8 @@ class ViewSystem
         $name = $data["name"];
         $price = $data["price"];
         $type = $data["type"];
+        $id = $data["id_products"];
+        
         require("Views\Layout\Templates\Template_CartItem.php");
     }
 }

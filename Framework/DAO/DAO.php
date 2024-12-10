@@ -64,14 +64,7 @@ class DAO
 
         $result = $stmt->get_result();
 
-        /*
-        if ($result->num_rows > 0) {
-            $data = $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            $data = null;
-        }
-        */
-
+        // Fecth data
         $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
         $this->DebugPrint("[GetAllProductsByType]: " . print_r($data, true));
 

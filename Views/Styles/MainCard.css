@@ -162,10 +162,31 @@
     color: var(--Primary) !important;
 }
 
+.btn-primary
+{
+    background-color: var(--Primary) !important;
+    border-width: 0 !important;
+    color: black !important;
+
+}
+
+.btn-primary:hover
+{
+    text-decoration: underline;    
+}
+
+
 .btn-secondary
 {
     background-color: none !important;
     background: none !important;
     color: white !important;
-    border-width: 0 !important;
+    border-width: 1px solid var(--Primary) !important;
+    border-color: var(--Primary) !important;
+    border-width: 1px !important;
+}
+
+.btn-secondary:hover
+{
+    text-decoration: underline;    
 }
