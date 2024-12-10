@@ -6,12 +6,12 @@ class ProductController
 {
     public function view()
     {
-        ViewSystem::PrintView("Products", "Menu");
+        ViewSystem::PrintView("Menu");
     }
 
     public function buy()
     {
-        ViewSystem::PrintView("Cart", "Cart");
+        ViewSystem::PrintView("Cart");
     }
 }
 

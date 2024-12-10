@@ -65,7 +65,9 @@ class Router
                 }
 
                 if(count($query) != 0)
+                {
                     $controllerClass->$action($query);
+                }
                 else
                     $controllerClass->$action();
 

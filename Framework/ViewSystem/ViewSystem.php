@@ -8,11 +8,14 @@ class ViewSystem
 
     public static function PrintView($viewName, $title = null)
     {
+        if($title == null)
+            $title = $viewName;
+        
         $viewPath = self::VIEW_FOLDER . $viewName . ".php";
         require_once(self::TEMPLATE_PATH);
     }
 
-    public static function PrintProductCard($name, $description, $type)
+    public static function PrintProductCard($name, $description, $type, $id)
     {
         $url = $type . "_" . $name . ".png";
         $url = self::RESOURCES_PATH . $url;
@@ -22,6 +25,9 @@ class ViewSystem
 
     public static function PrintCartItem($data)
     {
+        $name = $data["name"];
+        $price = $data["price"];
+        $type = $data["type"];
         require("Views\Layout\Templates\Template_CartItem.php");
     }
 }

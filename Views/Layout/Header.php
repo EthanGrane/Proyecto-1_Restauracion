@@ -8,8 +8,8 @@
         <!-- Menú de navegación Desktop -->
         <nav id="navbarMenuDesktop"
             class="collapse navbar-collapse d-none d-md-flex flex-grow-1 justify-content-between">
-            <a class="NavLink nav-link mx-3 text-secondary" href="/Menu">MENU</a>
             <a class="NavLink nav-link mx-3 text-secondary" href="#">RESTAURANTES</a>
+            <a class="NavLink nav-link mx-3 text-secondary" href="/Menu">MENU</a>
             <a class="NavLink nav-link mx-3 text-secondary" href="#">SOBRE NOSOTROS</a>
         </nav>
 
@@ -28,20 +28,19 @@
 
                 </button>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/Menu">Menu</a></li>
                     <li><a class="dropdown-item" href="/">Home</a></li>
-                    <li><a class="dropdown-item" href="/Menu">Products</a></li>
                     <li><a class="dropdown-item" href="/Contact">Contact us</a></li>
                 </ul>
             </div>
-
         </nav>
 
         <!-- Iconos del header -->
         <div class="d-flex">
-            <a href="#" class="HeaderIcon mx-2">
+            <a href="/User" class="HeaderIcon mx-2">
                 <img src="./Views/Resources/User_Icon.png" alt="User Icon" class="img-fluid" style="width: 48px;">
             </a>
-            <a href="#" class="HeaderIcon mx-2">
+            <a href="/Cart" class="HeaderIcon mx-2">
                 <img src="./Views/Resources/Shop-Cart_Icon.png" alt="Shop Cart Icon" class="img-fluid"
                     style="width: 48px;">
             </a>

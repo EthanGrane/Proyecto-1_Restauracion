@@ -11,7 +11,7 @@
         <?= $description ?>
     </p>
 
-    <a href="" class="ProductLink">
+    <a href="Cart/Add?id=<?=$id?>" class="ProductLink">
         + Añadir al carrito
     </a>
 </div>
