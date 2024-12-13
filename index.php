@@ -7,8 +7,4 @@ if ($currentView)
 {
     Router::GetPage($currentView["view"], $currentView["query"]);
 } 
-else 
-{
-    echo "404";
-}
 ?>

@@ -4,6 +4,10 @@ include_once("Framework/Router/Router_List.php");
 
 /*
  *  Enruta el url al controlador y action correspondiente.
+ * 
+ *  Source:
+ *  https://zerotomastery.io/blog/php-router/
+ *  https://www.freecodecamp.org/news/how-to-build-a-routing-system-in-php/
  */
 
 class Router
@@ -16,12 +20,9 @@ class Router
         $path = self::normalizePath($parsedUrl['path'] ?? '/');
 
         // La ruta esta almacenada en Router_List.php ?
-        if (!isset(Router_List::$Routes[$path])) {
-            if (self::$DebugMode) {
-                echo "Route not exist: $path";
-            }
-
-            return null;
+        if (!isset(Router_List::$Routes[$path])) 
+        {
+            return self::PageNotFound($method);
         }
 
         $view = Router_List::$Routes[$path];
@@ -31,7 +32,7 @@ class Router
                 echo "Invalid controller or action for route: $path";
             }
 
-            return null;
+            return self::PageNotFound($method);
         }
 
         $query = [];
@@ -90,6 +91,19 @@ class Router
         }
     }
 
+    private static function PageNotFound($method)
+    {
+        if($method == "POST")
+        {
+            $view = Router_List::$Routes["/404"];
+            return ["view" => $view, "query" => [""]];
+        }
+        else if ($method == "GET")
+        {
+            $view = Router_List::$Routes["/404"];
+            return ["view" => $view, "query" => [""]];
+        }
+    }
 }
 
 ?>

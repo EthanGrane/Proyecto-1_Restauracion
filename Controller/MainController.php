@@ -13,6 +13,11 @@ class MainController
     {
         include_once("Services/API.php");
     }
+
+    public function PageNotFound()
+    {
+        echo "404 GET";
+    }
 }
 
 ?>

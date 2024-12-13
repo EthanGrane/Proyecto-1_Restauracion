@@ -1,8 +1,8 @@
 <header class="border-bottom border-primary">
     <div class="container d-flex align-items-center justify-content-between py-2">
         <!-- Logo -->
-        <a href="./">
-            <img src="./Views/Resources/logo.png" alt="Logo" style="width: 48px; height: 48px;">
+        <a href="/">
+            <img src="\Views\Resources\logo.png" alt="Logo" style="width: 48px; height: 48px;">
         </a>
 
         <!-- Menú de navegación Desktop -->
@@ -38,10 +38,10 @@
         <!-- Iconos del header -->
         <div class="d-flex">
             <a href="/User" class="HeaderIcon mx-2">
-                <img src="./Views/Resources/User_Icon.png" alt="User Icon" class="img-fluid" style="width: 48px;">
+                <img src="\Views\Resources\User_Icon.png" alt="User Icon" class="img-fluid" style="width: 48px;">
             </a>
             <a href="/Cart" class="HeaderIcon mx-2">
-                <img src="./Views/Resources/Shop-Cart_Icon.png" alt="Shop Cart Icon" class="img-fluid"
+                <img src="\Views\Resources\Shop-Cart_Icon.png" alt="Shop Cart Icon" class="img-fluid"
                     style="width: 48px;">
             </a>
         </div>
