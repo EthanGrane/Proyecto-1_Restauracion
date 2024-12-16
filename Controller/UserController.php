@@ -27,22 +27,34 @@ class UserController
         $mail = $_POST["email"];
         $password = $_POST["password"];
 
-        $dao = new DAO(true);
-        $validation = $dao->ValidateUser($mail, $password);
+        try 
+        {
+            $dao = new DAO(true);
+            $validation = $dao->ValidateUser($mail, $password);
 
-        if ($validation) {
-            $data = $dao->GetUserDataByMailAndPassword($mail, $password);
-            SessionManager::SetUserSession(
-                $data["id_user"],
-                $data["name"],
-                $data["mail"]
-            );
-            header("Location: \user");
-        } else {
+            if ($validation) 
+            {
+                $data = $dao->GetUserDataByMailAndPassword($mail, $password);
+
+                SessionManager::SetUserSession(
+                    $data["id_user"],
+                    $data["name"],
+                    $data["mail"]
+                );
+                
+                header("Location: \user");
+            } 
+        } 
+        catch (Exception $e) 
+        {
+            SessionManager::SetException($e->getMessage());
+        } 
+        finally 
+        {
+            $dao->CloseConnection();
             header("Location: \login");
         }
 
-        $dao->CloseConnection();
     }
 
     public function ViewSignin()
@@ -57,29 +69,26 @@ class UserController
 
     public function Signin()
     {
-        try
-        {
+        try {
             $username = $_POST["name"];
             $email = $_POST["email"];
             $password = $_POST["password"];
-    
+
             $dao = new DAO();
             $dao->AddUserToBBDD($username, $email, $password);
-            
+
             $data = $dao->GetUserDataByMailAndPassword($email, $password);
-            SessionManager::SetUserSession($data["id_user"],$data["name"],$data["mail"]);
-            
+            SessionManager::SetUserSession($data["id_user"], $data["name"], $data["mail"]);
+
             $dao->CloseConnection();
 
             header("Location: \user");
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             SessionManager::SetException($e->getMessage());
             header("Location: \signin");
         }
     }
-    
+
     public function Logout()
     {
         header("Location: \login");

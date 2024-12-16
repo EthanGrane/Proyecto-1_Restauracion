@@ -61,10 +61,13 @@ class DAO
 
         $result = $stmt->get_result();
 
-        if ($result->num_rows > 0) {
+        if ($result->num_rows > 0) 
+        {
             return true;
-        } else {
-            return false;
+        } 
+        else 
+        {
+            throw new Exception("Email or Password incorrects.");
         }
     }
 
