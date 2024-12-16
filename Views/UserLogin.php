@@ -27,11 +27,18 @@
                 <button type="submit" class="btn btn-secondary">Iniciar Sesión</button>
             </div>
 
+            <p class=" text-secondary" style="color:red !important; max-height:64px; overflow:hidden;">
+                <?php
+                $exception = SessionManager::GetException();
+                echo $exception;
+                ?>
+            </p>
+
             <hr class="w-100 text-secondary">
 
             <!-- Crear cuenta -->
             <div class="col-12 text-center">
-                <a class="text-secondary text-decoration-none" href="\User\Signin">Crear una cuenta nueva</a>
+                <a class="text-secondary text-decoration-none" href="\Signin">Crear una cuenta nueva</a>
             </div>
         </form>
 

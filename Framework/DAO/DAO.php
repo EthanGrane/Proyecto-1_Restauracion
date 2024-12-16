@@ -14,7 +14,7 @@ class DAO
         if ($this->conn) {
             $this->DebugPrint("[DAO.php] Connection with DDBB sucesfull");
         } else {
-            $this->DebugPrint( "[DAO.php] Connection with DDBB failed");
+            $this->DebugPrint("[DAO.php] Connection with DDBB failed");
         }
     }
 
@@ -35,6 +35,7 @@ class DAO
         $this->DebugPrint("connection closed");
     }
 
+    #region User
     public function GetUserDataByMailAndPassword($mailParam, $passwordParam)
     {
         $stmt = $this->conn->prepare("SELECT * FROM Users WHERE mail = ? AND password = ?");
@@ -52,6 +53,64 @@ class DAO
         return $data;
     }
 
+    public function ValidateUser($mailParam, $passwordParam)
+    {
+        $stmt = $this->conn->prepare("SELECT id_user FROM Users WHERE mail = ? AND password = ?");
+        $stmt->bind_param("ss", $mailParam, $passwordParam);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function AddUserToBBDD($userName, $userMail, $userPassword)
+    {
+        $this->ValidateNewUserData($userName, $userMail, $userPassword);
+
+        $stmt = $this->conn->prepare("INSERT INTO Web.Users (name, mail, password, role) VALUES (?, ?, ?, '0')");
+        $stmt->bind_param("sss", $userName, $userMail, $userPassword);
+        $stmt->execute();
+    }
+
+    private function ValidateNewUserData($userName, $userMail, $userPassword)
+    {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM Web.Users WHERE mail = ?");
+        if (!$stmt) {
+            throw new Exception("Error preparing statement: " . $this->conn->error);
+        }
+
+        $stmt->bind_param("s", $userMail);
+        $stmt->execute();
+        $stmt->bind_result($count);
+
+        if (!$stmt->fetch()) {
+            throw new Exception("Error fetching result.");
+        }
+
+        $stmt->close();
+
+        if ($count > 0) {
+            throw new Exception("Email is already registered.");
+        }
+
+        if (strlen($userName) > 25) {
+            throw new Exception("Username is too long.");
+        }
+
+        if (strlen($userPassword) < 6) {
+            throw new Exception("Password must be at least 6 characters long.");
+        }
+    }
+
+
+    #endregion
+
+    #region Product
     public function GetAllProductsByType($type_param)
     {
         static $WHITELIST = ["MainDish", "Drink"];
@@ -73,11 +132,10 @@ class DAO
 
     public function GetProductsDataByIDs($ids)
     {
-        if (empty($ids)) 
-        {
+        if (empty($ids)) {
             return [];
         }
-        
+
         $this->DebugPrint("[GetProductsByIDs]");
         $this->DebugPrint(" · [ids]: " . print_r($ids, true));
 
@@ -95,22 +153,22 @@ class DAO
         $stmt->execute();
         $result = $stmt->get_result();
         $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : [];
-        
+
         $this->DebugPrint(" · [data]: " . print_r($data, true));
 
         return $data;
     }
+    #endregion
 
     public function DebugPrint($message)
     {
-        if($this->debugMode == false)
+        if ($this->debugMode == false)
             return;
 
         echo "<table style='border: solid blue 1px'>
                 <th style='font-family: consolas; color: cyan; font-size: 12px'>$message</th>
             </table>";
     }
-
 
 }
 

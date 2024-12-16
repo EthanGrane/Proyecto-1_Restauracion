@@ -1,3 +1,14 @@
+<?php
+require_once("Framework\SessionManager\SessionManager.php");
+
+$name = SessionManager::GetUserSession()["UserName"];
+$mail = SessionManager::GetUserSession()["UserMail"];
+?>
+
+<div class="container d-flex w-100 justify-content-end">
+    <a href="\user\logout" class="btn btn-secondary m-3">Logout</a>
+</div>
+
 <!-- Perfil de usuario -->
 <div class="w-100" style="height: 256px; position: relative;">
     <!-- Fondo -->
@@ -7,10 +18,11 @@
 
     <!-- Contenido -->
     <div class="container d-flex flex-column align-items-center justify-content-center h-100">
-        <img src="Views/Resources/logo.png" alt="Imagen de perfil" class="rounded-circle" style="width: 150px; height: 150px;">
+        <img src="Views/Resources/logo.png" alt="Imagen de perfil" class="rounded-circle"
+            style="width: 150px; height: 150px;">
 
-        <h3 class="mt-3 mb-1 text-white">Admin</h3>
-        <p class="text-white">Admin@admin.com</p>
+        <h3 class="mt-3 mb-1 text-white"> <?= $name ?> </h3>
+        <p class="text-white"> <?= $mail ?> </p>
 
     </div>
 </div>
@@ -23,9 +35,8 @@
         <div class="row">
 
             <?php
-            for ($i = 0; $i < 5; $i++) 
-            {
-            ?>
+            for ($i = 0; $i < 5; $i++) {
+                ?>
 
                 <div class="col-12 mb-3">
                     <div class="border rounded p-3 d-flex justify-content-between">
@@ -34,8 +45,8 @@
                         <p class="mb-1"><strong>Precio total:</strong> 10.00€</p>
                     </div>
                 </div>
-                
-            <?php
+
+                <?php
             }
             ?>
         </div>
