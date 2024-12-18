@@ -14,10 +14,13 @@ class UserController
     }
 
     public function ViewLogin()
-    {
-        if (SessionManager::GetUserSession()["UserID"] == null) {
+    {        
+        if (SessionManager::GetUserSession()["UserID"] == null) 
+        {
             ViewSystem::PrintView("UserLogin");
-        } else {
+        } 
+        else 
+        {
             header("Location: \user");
         }
     }
@@ -97,7 +100,7 @@ class UserController
 
     private static function CheckUserIsLogged()
     {
-        if (SessionManager::GetUserSession() == null) {
+        if (SessionManager::GetUserSession()["UserID"] == null) {
             header("Location: \login");
             exit();
         }

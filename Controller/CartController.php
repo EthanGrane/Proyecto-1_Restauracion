@@ -7,7 +7,7 @@ class CartController
 {
     public function view()
     {
-        ViewSystem::PrintView("Cart");
+        ViewSystem::PrintView("/Cart");
     }
 
     public function Add()
