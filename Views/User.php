@@ -35,6 +35,7 @@ $mail = SessionManager::GetUserSession()["UserMail"];
         <div class="row">
 
             <?php
+            
             for ($i = 0; $i < 5; $i++) {
                 ?>
 

@@ -20,7 +20,7 @@
             <form action="Cart/Remove" method="POST">
                 <input type="hidden" name="id" value="<?= $id ?>">
                 <button class="btn btn-secondary">
-                    Remove
+                    Quitar
                 </button>
             </form>
         </div>

@@ -105,7 +105,17 @@ try {
                     <p>Total:</p>
                     <p><?= $totalPrice ?>€</p>
                 </div>
+
+                <form action="\Cart\Checkout" method="POST">
+                <?php if(count($cartItems) != 0)
+                echo'
+                    <input type="submit"  class="btn btn-primary w-100" value="Comprar">
+                    ';
+                ?>
+                </form>
+
             </div>
         </div>
     </div>
+
 </main>

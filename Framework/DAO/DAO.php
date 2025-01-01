@@ -61,12 +61,9 @@ class DAO
 
         $result = $stmt->get_result();
 
-        if ($result->num_rows > 0) 
-        {
+        if ($result->num_rows > 0) {
             return true;
-        } 
-        else 
-        {
+        } else {
             throw new Exception("Email or Password incorrects.");
         }
     }
@@ -161,6 +158,59 @@ class DAO
 
         return $data;
     }
+    #endregion
+
+    #region Orders
+    public function GetOrderByUserId($userID)
+    {
+        $query = "SELECT * FROM Web.Orders WHERE id_user = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $data = [];
+        while ($row = $result->fetch_assoc()) {
+            $data[] = $row;
+        }
+    
+        $stmt->close();
+    
+        return $data;
+    }
+    
+
+    public function CreateNewOrder($userID, $discountID, $productArray)
+    {
+        $query = "INSERT INTO Web.Orders (`id_user`, `id_discount`, `date`) VALUES (?, ?, ?);";
+        $date = date("Y-m-d");
+
+        $this->DebugPrint("CreateNewOrder with value: $userID, $discountID, $date");
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("iis", $userID, $discountID, $date);
+        $stmt->execute();
+
+        $orderID = $this->conn->insert_id;
+
+        $stmt->close();
+
+        for ($i = 0; $i < count($productArray); $i++) 
+        {
+            $this->CreateOrderProduct($productArray[$i], $orderID);
+        }
+    }
+
+    private function CreateOrderProduct($productID, $orderID)
+    {
+        $query = "INSERT INTO Web.Orders_Products (`id_order`, `id_product`, `amount`) VALUES (?, ?, 1);";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ii", $orderID, $productID);
+        $stmt->execute();
+        $stmt->close();
+    }
+
     #endregion
 
     public function DebugPrint($message)

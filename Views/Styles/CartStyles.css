@@ -23,3 +23,22 @@
     font-size: 26px;
     font-weight: 100 !important;
 }
+
+.CartInput
+{
+    border: solid 1px grey;
+    background-color: black;
+    padding: 8px;
+    border-radius: 4px;
+    color: white;
+}
+
+.CartLabel
+{
+    color: var(--NeutralColor_3);
+    font-weight: 600;
+
+    margin: 0;
+    padding-left: 0;
+    padding-top: 8px;
+}
