@@ -72,7 +72,8 @@ class UserController
 
     public function Signin()
     {
-        try {
+        try 
+        {
             $username = $_POST["name"];
             $email = $_POST["email"];
             $password = $_POST["password"];
@@ -86,7 +87,9 @@ class UserController
             $dao->CloseConnection();
 
             header("Location: \user");
-        } catch (Exception $e) {
+        } 
+        catch (Exception $e) 
+        {
             SessionManager::SetException($e->getMessage());
             header("Location: \signin");
         }

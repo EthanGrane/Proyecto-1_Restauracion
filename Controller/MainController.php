@@ -14,9 +14,9 @@ class MainController
         include_once("Services/API.php");
     }
 
-    public function PageNotFound()
+    public function StatusCode()
     {
-        echo "404 GET";
+        ViewSystem::PrintView("StatusCode");
     }
 }
 

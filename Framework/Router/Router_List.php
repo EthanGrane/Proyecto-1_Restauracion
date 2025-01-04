@@ -4,7 +4,7 @@ class Router_List
     public static $Routes = [
         "/" => ["controller" => "Main", "action" => ["GET" => "index"]],
 
-        "/404" => ["controller" => "Main", "action" => ["GET" => "PageNotFound"]],
+        "/StatusCode" => ["controller" => "Main", "action" => ["GET" => "StatusCode"]],
 
         /* Product Controller */
         "/menu" => ["controller" => "Product", "action" => ["GET" => "view"]],

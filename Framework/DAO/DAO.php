@@ -36,35 +36,48 @@ class DAO
     }
 
     #region User
-    public function GetUserDataByMailAndPassword($mailParam, $passwordParam)
+    public function GetUserDataByMailAndPassword($mailParam, $hashPasswordParam)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Users WHERE mail = ? AND password = ?");
-        $stmt->bind_param("ss", $mailParam, $passwordParam);
+        $stmt = $this->conn->prepare("SELECT * FROM Users WHERE mail = ?");
+        $stmt->bind_param("s", $mailParam);
         $stmt->execute();
 
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
             $data = $result->fetch_assoc();
-        } else {
-            $data = null;
-        }
 
-        return $data;
+            // Verificar la contraseña utilizando password_verify
+            if (password_verify($hashPasswordParam, $data['password'])) {
+                return $data;
+            } else {
+                return null; // Contraseña incorrecta
+            }
+        } else {
+            return null; // No se encontró el usuario
+        }
     }
 
-    public function ValidateUser($mailParam, $passwordParam)
+
+    public function ValidateUser($mailParam, $hashPasswordParam)
     {
-        $stmt = $this->conn->prepare("SELECT id_user FROM Users WHERE mail = ? AND password = ?");
-        $stmt->bind_param("ss", $mailParam, $passwordParam);
+        $stmt = $this->conn->prepare("SELECT id_user, password FROM Users WHERE mail = ?");
+        $stmt->bind_param("s", $mailParam);
         $stmt->execute();
 
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            return true;
+            $data = $result->fetch_assoc();
+
+            // Verificar la contraseña utilizando password_verify
+            if (password_verify($hashPasswordParam, $data['password'])) {
+                return true;
+            } else {
+                throw new Exception("Email or Password incorrect.");
+            }
         } else {
-            throw new Exception("Email or Password incorrects.");
+            throw new Exception("Email or Password incorrect.");
         }
     }
 
@@ -72,8 +85,12 @@ class DAO
     {
         $this->ValidateNewUserData($userName, $userMail, $userPassword);
 
+        // Encriptar la contraseña con password_hash
+        $hashPass = password_hash($userPassword, PASSWORD_DEFAULT);
+        $userPassword = null; // Limpiar la variable de la contraseña en texto claro
+
         $stmt = $this->conn->prepare("INSERT INTO Web.Users (name, mail, password, role) VALUES (?, ?, ?, '0')");
-        $stmt->bind_param("sss", $userName, $userMail, $userPassword);
+        $stmt->bind_param("sss", $userName, $userMail, $hashPass);
         $stmt->execute();
     }
 
@@ -168,15 +185,14 @@ class DAO
         $stmt->bind_param("i", $userID);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         $data = [];
-        while ($row = $result->fetch_assoc()) 
-        {
+        while ($row = $result->fetch_assoc()) {
             $data[] = $row;
         }
-    
+
         $stmt->close();
-    
+
         return $data;
     }
 
@@ -187,15 +203,14 @@ class DAO
         $stmt->bind_param("i", $orderID);
         $stmt->execute();
         $result = $stmt->get_result();
-        
+
         $data = [];
-        while ($row = $result->fetch_assoc()) 
-        {
+        while ($row = $result->fetch_assoc()) {
             $data[] = $row;
         }
-    
+
         $stmt->close();
-    
+
         return $data;
     }
 
@@ -209,8 +224,7 @@ class DAO
         // Recoje toda la informacion sobre los productos. (mismo codigo que en Cart.php seccion try{})
         $cartItems = [];
         $cartData = $this->GetProductsDataByIDs($productIdsArray);
-        foreach ($productIdsArray as $productId) 
-        {
+        foreach ($productIdsArray as $productId) {
             for ($i = 0; $i < count($cartData); $i++) {
                 if ($productId == $cartData[$i]["id_products"]) {
                     array_push($cartItems, $cartData[$i]);
@@ -221,8 +235,7 @@ class DAO
 
         // Calcula el precio final
         $finalPrice = 0.0;
-        for ($i=0; $i < count($cartItems); $i++) 
-        { 
+        for ($i = 0; $i < count($cartItems); $i++) {
             $sum = $cartItems[$i]["price"];
             $finalPrice += $sum;
             $this->DebugPrint("Final Price += $sum");
@@ -230,22 +243,18 @@ class DAO
         $this->DebugPrint("Final Price without discount: $finalPrice");
 
         // Resta el descuento al precio total
-        if($discountCode != null)
-        {
+        if ($discountCode != null) {
             $discountData = $this->GetDiscountDataByCode($discountCode);
             $discountValue = 0.0;
 
             $this->DebugPrint("Discount type:" . $discountData["discount_type"]);
             $this->DebugPrint("Discount Value:" . $discountData["value"]);
 
-            if ($discountData["discount_type"] == 0) 
-            {
+            if ($discountData["discount_type"] == 0) {
                 $discountValue = $finalPrice * ($discountData["value"] * 0.01);
                 // Respeta que el numero tenga 2 decimales.
                 $discountValue = number_format($discountValue, 2, '.', '');
-            } 
-            elseif ($discountData["discount_type"] == 1) 
-            {
+            } elseif ($discountData["discount_type"] == 1) {
                 $discountValue = $discountData["value"];
                 // Respeta que el numero tenga 2 decimales.
                 $discountValue = number_format($discountValue, 2, '.', '');
@@ -266,8 +275,7 @@ class DAO
 
         $stmt->close();
 
-        for ($i = 0; $i < count($productIdsArray); $i++) 
-        {
+        for ($i = 0; $i < count($productIdsArray); $i++) {
             $this->CreateOrderProduct($productIdsArray[$i], $orderID);
         }
     }
@@ -292,54 +300,51 @@ class DAO
      *      0 - Descuento de tipo porcentaje (-20% del precio original)
      *      1 - Descuento de tipo fijo (-2€ del precio original)
      */
-        public function IsDiscountCodeValid($discountCode)
-        {
-            $query = "SELECT * FROM Web.Discount WHERE discount_code = ?";
+    public function IsDiscountCodeValid($discountCode)
+    {
+        $query = "SELECT * FROM Web.Discount WHERE discount_code = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $discountCode);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $data = $result->fetch_assoc();
+            if ($data["valid"] == 1)
+                return true;
+
+            return false;
+        } else
+            return false;
+    }
+
+    public function GetDiscountDataByCode($discountCode)
+    {
+        if ($this->IsDiscountCodeValid($discountCode)) {
+            $query = "SELECT * FROM Web.Discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
             $stmt = $this->conn->prepare($query);
             $stmt->bind_param("s", $discountCode);
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            if($result->num_rows > 0)
-            {
-                $data = $result->fetch_assoc();
-                if($data["valid"] == 1)
-                    return true;
-
-                return false;
-            }
-            else 
-                return false;
-        }
-
-        public function GetDiscountDataByCode($discountCode)
-        {
-            if($this->IsDiscountCodeValid($discountCode))
-            {
-                $query = "SELECT * FROM Web.Discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
-                $stmt = $this->conn->prepare($query);
-                $stmt->bind_param("s", $discountCode);
-                $stmt->execute();
-                $result = $stmt->get_result();
-
-                $data = $result->fetch_assoc();
-                return $data;
-            }
-
-            return null;
-        }
-
-        public function GetDiscountDataById($discountID)
-        {
-            $query = "SELECT * FROM Web.Discount WHERE id_discount = ? LIMIT 1";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bind_param("s", $discountID);
             $stmt->execute();
             $result = $stmt->get_result();
 
             $data = $result->fetch_assoc();
             return $data;
         }
+
+        return null;
+    }
+
+    public function GetDiscountDataById($discountID)
+    {
+        $query = "SELECT * FROM Web.Discount WHERE id_discount = ? LIMIT 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $discountID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $data = $result->fetch_assoc();
+        return $data;
+    }
     #endregion
 
     public function DebugPrint($message)

@@ -95,12 +95,12 @@ class Router
     {
         if($method == "POST")
         {
-            $view = Router_List::$Routes["/404"];
+            $view = Router_List::$Routes["/StatusCode"];
             return ["view" => $view, "query" => [""]];
         }
         else if ($method == "GET")
         {
-            $view = Router_List::$Routes["/404"];
+            $view = Router_List::$Routes["/StatusCode"];
             return ["view" => $view, "query" => [""]];
         }
     }
