@@ -12,25 +12,6 @@ class CartController
         ViewSystem::PrintView("/Cart");
     }
 
-    public function Checkout()
-    {
-        $cart = CookieHandler::GetCart();
-        if(count($cart) == 0)
-        {
-            header("Location: /Cart");
-            exit;
-        }
-
-        $userSession = SessionManager::GetUserSession();
-        if($userSession["UserID"] == null)
-        {
-            header("Location: /Login");
-            exit;
-        }
-
-        ViewSystem::PrintView("/Checkout");
-    }
-
     public function Add()
     {
         $id = $_POST["id"];
@@ -52,14 +33,48 @@ class CartController
         CookieHandler::ClearCart();
         header("Location: /Cart");
     }
+    
+    public function Checkout()
+    {
+        $discountCode = $_POST["discountCode"];
+        if($discountCode != "")
+        {
+            $dao = new DAO();
+            $isValid = $dao->IsDiscountCodeValid($discountCode);
+
+            if(!$isValid)
+            {
+                SessionManager::SetException("Codigo de Descuento no es valido.");
+                header("Location: /Cart");
+                exit;
+            }
+        }
+
+        $cart = json_decode($_POST["cartItems"],true);
+        if(count($cart) == 0)
+        {
+            header("Location: /Cart");
+            exit;
+        }
+
+        $userSession = SessionManager::GetUserSession();
+        if($userSession["UserID"] == null)
+        {
+            header("Location: /Login");
+            exit;
+        }
+
+        ViewSystem::PrintView("/Checkout");
+    }
 
     public function Finish()
     {
-        $cart = CookieHandler::GetCart();
+        $cart = json_decode($_POST["cartItems"],true);
         $userSession = SessionManager::GetUserSession();
-                
+        
         $dao = new DAO(true);
-        $dao->CreateNewOrder($userSession["UserID"],0, $cart);
+
+        $dao->CreateNewOrder($userSession["UserID"],$_POST["discountCode"], $cart);
         $dao->CloseConnection();
 
         CookieHandler::ClearCart();

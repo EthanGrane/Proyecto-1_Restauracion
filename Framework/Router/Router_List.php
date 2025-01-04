@@ -12,12 +12,12 @@ class Router_List
         /* Cart Controller */
         // GET
         "/cart" => ["controller" => "Cart", "action" => ["GET" => "view"]],
-        "/cart/checkout" => ["controller" => "Cart", "action" => ["POST" => "Checkout"]],
-
+        
         // POST
         "/cart/add" => ["controller" => "Cart", "action" => ["POST" => "Add"]],
         "/cart/remove" => ["controller" => "Cart", "action" => ["POST" => "Remove"]],
         "/cart/clear" => ["controller" => "Cart", "action" => ["POST" => "Clear"]],
+        "/cart/checkout" => ["controller" => "Cart", "action" => ["POST" => "Checkout"]],
         "/cart/finish" => ["controller" => "Cart", "action" => ["POST" => "Finish"]],
 
         /* User Controller */

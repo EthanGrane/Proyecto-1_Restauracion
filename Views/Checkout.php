@@ -4,26 +4,44 @@ include_once("Framework\ViewSystem\ViewSystem.php");
 include_once("Framework\CookieHandler\CookieHandler.php");
 include_once("Framework\SessionManager\SessionManager.php");
 
-try {
-    $cart = CookieHandler::GetCart();
+try 
+{
+    // Esto evita que puedas añadir mas items al carro mientras estas en el checkout
+    $cart = json_decode($_POST["cartItems"], true);
+    $discountCode = $_POST["discountCode"];
 
+    // DAO
     $dao = new DAO();
+
+        // Product data
     $cartData = $dao->GetProductsDataByIDs($cart);
+
+        // Discount data
+    if ($discountCode != "")
+    $discountData = $dao->GetDiscountDataByCode($discountCode);
+
     $dao->CloseConnection();
+    // DAO END
 
     $userSession = SessionManager::GetUserSession();
 
+    // Guarda los datos de los productos del carrito para mostrarlos posteriormente.
     $cartItems = [];
-    foreach ($cart as $productId) {
-        for ($i = 0; $i < count($cartData); $i++) {
-            if ($productId == $cartData[$i]["id_products"]) {
+    foreach ($cart as $productId) 
+    {
+        for ($i = 0; $i < count($cartData); $i++) 
+        {
+            if ($productId == $cartData[$i]["id_products"]) 
+            {
                 array_push($cartItems, $cartData[$i]);
                 continue;
             }
         }
-
     }
-} catch (Exception $e) {
+
+} 
+catch (Exception $e) 
+{
     $dao = null;
 }
 ?>
@@ -40,16 +58,20 @@ try {
             <!-- Checkout Form -->
             <div class="col-8">
                 <form action="\cart\finish" method="POST">
+                    <input type="hidden" name="cartItems" value='<?php echo $_POST["cartItems"]; ?>'>
+                    <input type="hidden" name="discountCode" value='<?php echo $_POST["discountCode"]; ?>'>
 
                     <div class="row">
                         <div class="col-5">
                             <h2>Direccion de Compra</h2>
                             <div class="row">
                                 <label for="" class="CartLabel">Nombre Completo</label>
-                                <input type="text" name="" class="CartInput" value="<?=$userSession["UserName"]?>" lolxd>
+                                <input type="text" name="" class="CartInput" value="<?= $userSession["UserName"] ?>"
+                                    lolxd>
 
                                 <label for="" class="CartLabel">Email</label>
-                                <input type="email" name="" class="CartInput" value="<?=$userSession["UserMail"]?>" lolxd>
+                                <input type="email" name="" class="CartInput" value="<?= $userSession["UserMail"] ?>"
+                                    lolxd>
 
                                 <label for="" class="CartLabel">Provincia</label>
                                 <input type="text" name="" class="CartInput" lolxd>
@@ -68,7 +90,8 @@ try {
                             <h2>Informacion de Pago</h2>
                             <div class="row">
                                 <label for="" class="CartLabel">Nombre en la Tarjeta</label>
-                                <input type="text" name="" class="CartInput" value="<?=$userSession["UserName"]?>" lolxd>
+                                <input type="text" name="" class="CartInput" value="<?= $userSession["UserName"] ?>"
+                                    lolxd>
 
                                 <label for="" class="CartLabel">Numero de Tarjeta</label>
                                 <input type="text" name="" class="CartInput" lolxd>
@@ -96,6 +119,9 @@ try {
                 </div>
 
                 <?php
+                /*
+                 * Calculo del precio total y individual 
+                 */
                 $totalPrice = 0.0;
                 for ($i = 0; $i < count($cartItems); $i++) {
                     $totalPrice += $cartItems[$i]["price"];
@@ -105,14 +131,68 @@ try {
                 </div>
                 ";
                 }
+
+                /*
+                 * Calculo del descuento y resta del precio final
+                 */
+
+                // DISCOUNT
+                $discountValue = 0;
+                if ($discountCode != "") 
+                {
+                    if ($discountData["discount_type"] == 0) 
+                    {
+                        $discountValue = $totalPrice * ($discountData["value"] * 0.01);
+                        // Respeta que el numero tenga 2 decimales.
+                        $discountValue = number_format($discountValue, 2, '.', '');
+                    } 
+                    elseif ($discountData["discount_type"] == 1) 
+                    {
+                        $discountValue = $discountData["value"];
+                        // Respeta que el numero tenga 2 decimales.
+                        $discountValue = number_format($discountValue, 2, '.', '');
+                    }
+                    ?>
+
+                <div class="d-flex justify-content-between">
+                    <p>Descuento: </p>
+                </div>
+                <div class='d-flex justify-content-end'>
+                    <p>- <?=$discountValue?> €</p>
+                </div>
+
+                <?php
+                // DISCOUNT END
+                }
                 ?>
 
                 <hr>
 
                 <div class="d-flex justify-content-between">
                     <p>Total:</p>
-                    <p><?= $totalPrice ?>€</p>
+
+                    <p <?php 
+                    // Aplica un estilo de 'tachado' al <p> si hay un descuento aplicado
+                    if($discountCode != "") echo'style="text-decoration: line-through;"';
+                    ?>>
+                    <?= $totalPrice ?>€
+                    </p>
                 </div>
+
+                <?php
+                // TOTAL DESCUENTO
+                if($discountCode != "")
+                {
+                ?>
+
+                <div class="d-flex justify-content-end">
+                    <p><?= $totalPrice - $discountValue ?>€</p>
+                </div>
+
+                <?php
+                // TOTAL DESCUENTO END
+                }
+                ?>
 
             </div>
         </div>

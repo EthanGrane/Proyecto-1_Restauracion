@@ -161,7 +161,7 @@ class DAO
     #endregion
 
     #region Orders
-    public function GetOrderByUserId($userID)
+    public function GetOrdersByUserId($userID)
     {
         $query = "SELECT * FROM Web.Orders WHERE id_user = ?";
         $stmt = $this->conn->prepare($query);
@@ -170,7 +170,8 @@ class DAO
         $result = $stmt->get_result();
         
         $data = [];
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $result->fetch_assoc()) 
+        {
             $data[] = $row;
         }
     
@@ -178,26 +179,96 @@ class DAO
     
         return $data;
     }
-    
 
-    public function CreateNewOrder($userID, $discountID, $productArray)
+    public function GetProductsByOrderId($orderID)
     {
-        $query = "INSERT INTO Web.Orders (`id_user`, `id_discount`, `date`) VALUES (?, ?, ?);";
+        $query = "SELECT * FROM Web.Orders_Products WHERE id_order = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $orderID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        $data = [];
+        while ($row = $result->fetch_assoc()) 
+        {
+            $data[] = $row;
+        }
+    
+        $stmt->close();
+    
+        return $data;
+    }
+
+    public function CreateNewOrder($userID, $discountCode, $productIdsArray)
+    {
+        $query = "INSERT INTO Web.Orders (`id_user`, `id_discount`, `date`, `final_price`) VALUES (?, ?, ?,?);";
         $date = date("Y-m-d");
 
-        $this->DebugPrint("CreateNewOrder with value: $userID, $discountID, $date");
+        $this->DebugPrint("CreateNewOrder with value: $userID, $discountCode, $date");
 
+        // Recoje toda la informacion sobre los productos. (mismo codigo que en Cart.php seccion try{})
+        $cartItems = [];
+        $cartData = $this->GetProductsDataByIDs($productIdsArray);
+        foreach ($productIdsArray as $productId) 
+        {
+            for ($i = 0; $i < count($cartData); $i++) {
+                if ($productId == $cartData[$i]["id_products"]) {
+                    array_push($cartItems, $cartData[$i]);
+                    continue;
+                }
+            }
+        }
+
+        // Calcula el precio final
+        $finalPrice = 0.0;
+        for ($i=0; $i < count($cartItems); $i++) 
+        { 
+            $sum = $cartItems[$i]["price"];
+            $finalPrice += $sum;
+            $this->DebugPrint("Final Price += $sum");
+        }
+        $this->DebugPrint("Final Price without discount: $finalPrice");
+
+        // Resta el descuento al precio total
+        if($discountCode != null)
+        {
+            $discountData = $this->GetDiscountDataByCode($discountCode);
+            $discountValue = 0.0;
+
+            $this->DebugPrint("Discount type:" . $discountData["discount_type"]);
+            $this->DebugPrint("Discount Value:" . $discountData["value"]);
+
+            if ($discountData["discount_type"] == 0) 
+            {
+                $discountValue = $finalPrice * ($discountData["value"] * 0.01);
+                // Respeta que el numero tenga 2 decimales.
+                $discountValue = number_format($discountValue, 2, '.', '');
+            } 
+            elseif ($discountData["discount_type"] == 1) 
+            {
+                $discountValue = $discountData["value"];
+                // Respeta que el numero tenga 2 decimales.
+                $discountValue = number_format($discountValue, 2, '.', '');
+            }
+
+            $finalPrice -= $discountValue;
+            $this->DebugPrint("Final Price with discount: $finalPrice");
+
+        }
+
+        // Ejecuta SQL
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("iis", $userID, $discountID, $date);
+        $stmt->bind_param("iisd", $userID, $discountData["id_discount"], $date, $finalPrice);
         $stmt->execute();
 
+        //Recoje la id auto-generada
         $orderID = $this->conn->insert_id;
 
         $stmt->close();
 
-        for ($i = 0; $i < count($productArray); $i++) 
+        for ($i = 0; $i < count($productIdsArray); $i++) 
         {
-            $this->CreateOrderProduct($productArray[$i], $orderID);
+            $this->CreateOrderProduct($productIdsArray[$i], $orderID);
         }
     }
 
@@ -211,6 +282,64 @@ class DAO
         $stmt->close();
     }
 
+    #endregion
+
+    #region Discounts
+
+    /*
+     * Solo se puede aplicar un descuento por pedido y solo se aplica al pedido entero no a productos individuales.
+     * En la descripcion de SQL del valor discount_type hay una explicacion de cada valor que significa
+     *      0 - Descuento de tipo porcentaje (-20% del precio original)
+     *      1 - Descuento de tipo fijo (-2€ del precio original)
+     */
+        public function IsDiscountCodeValid($discountCode)
+        {
+            $query = "SELECT * FROM Web.Discount WHERE discount_code = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bind_param("s", $discountCode);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if($result->num_rows > 0)
+            {
+                $data = $result->fetch_assoc();
+                if($data["valid"] == 1)
+                    return true;
+
+                return false;
+            }
+            else 
+                return false;
+        }
+
+        public function GetDiscountDataByCode($discountCode)
+        {
+            if($this->IsDiscountCodeValid($discountCode))
+            {
+                $query = "SELECT * FROM Web.Discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
+                $stmt = $this->conn->prepare($query);
+                $stmt->bind_param("s", $discountCode);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                $data = $result->fetch_assoc();
+                return $data;
+            }
+
+            return null;
+        }
+
+        public function GetDiscountDataById($discountID)
+        {
+            $query = "SELECT * FROM Web.Discount WHERE id_discount = ? LIMIT 1";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bind_param("s", $discountID);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $data = $result->fetch_assoc();
+            return $data;
+        }
     #endregion
 
     public function DebugPrint($message)
