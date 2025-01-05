@@ -8,9 +8,9 @@
         <!-- Menú de navegación Desktop -->
         <nav id="navbarMenuDesktop"
             class="collapse navbar-collapse d-none d-md-flex flex-grow-1 justify-content-between">
-            <a class="NavLink nav-link mx-3 text-secondary" href="#">RESTAURANTES</a>
+            <a class="NavLink nav-link mx-3 text-secondary" href="/Location">RESTAURANTES</a>
             <a class="NavLink nav-link mx-3 text-secondary" href="/Menu">MENU</a>
-            <a class="NavLink nav-link mx-3 text-secondary" href="#">SOBRE NOSOTROS</a>
+            <a class="NavLink nav-link mx-3 text-secondary" href="/AboutUs">SOBRE NOSOTROS</a>
         </nav>
 
         <!-- Menú de navegación Mobile -->

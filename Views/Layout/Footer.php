@@ -45,7 +45,7 @@
 
         <div class="footerSection">
             <h3 class="EsloganMarca">
-                FOR GAMERS. BY GAMERS.™
+                CADA BOWL CUENTA UNA HISTORIA™
             </h3>
         </div>
     </div>

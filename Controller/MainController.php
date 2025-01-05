@@ -9,6 +9,16 @@ class MainController
         ViewSystem::PrintView("Index");
     }
 
+    public function about()
+    {
+        ViewSystem::PrintView("AboutUs");
+    }
+
+    public function location()
+    {
+        ViewSystem::PrintView("Location");
+    }
+
     public function api()
     {
         include_once("Services/API.php");
