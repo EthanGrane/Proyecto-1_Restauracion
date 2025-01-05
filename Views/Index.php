@@ -16,10 +16,16 @@ include("Views\Layout\Templates\Template_MainCard.php");
 $data = MainCard_Data::GetDataByKey("TeriyakiBowl");
 include("Views\Layout\Templates\Template_MainCard.php");
 
+$data = MainCard_Data::GetDataByKey("PadThai");
+include("Views\Layout\Templates\Template_MainCard.php");
+
+$data = MainCard_Data::GetDataByKey("ComboRamen");
+include("Views\Layout\Templates\Template_MainCard.php");
+
 /*
  * Half Cards
  */
 
-include("Views\Layout\Templates\Template_HalfCard.php");
+// include("Views\Layout\Templates\Template_HalfCard.php");
 
 ?>

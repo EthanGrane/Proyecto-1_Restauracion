@@ -24,6 +24,22 @@ class MainCard_Data
                 "ResourceName" => "MainCard_Background_TeriyakyBowl.png",
                 "linkTitle" => "Comprar Ahora",
                 "linkHRef" => "/Menu"
+            ],
+
+            "ComboRamen" => [
+                "titles" => ["Mega Combo Ramen"],
+                "subtitles" => ["Oferta por tiempo limitado usando el codigo:", "MegaCombo"],
+                "ResourceName" => "MainCard_Background_ComboRamen.webp",
+                "linkTitle" => "Comprar Ahora",
+                "linkHRef" => "/Menu"
+            ],
+
+            "PadThai" => [
+                "titles" => ["Nuevo Pad Thai"],
+                "subtitles" => ["Disfruta del mejor Pad Thai al estilo Tailandes."],
+                "ResourceName" => "MainCard_Background_PadThai.webp",
+                "linkTitle" => "Comprar Ahora",
+                "linkHRef" => "/Menu"
             ]
         ];
 

@@ -57,6 +57,15 @@ class CartController
             exit;
         }
 
+        if($discountCode != "")
+        {
+            if(count($cart) <= 3)
+            {
+                SessionManager::SetException("Codigos de descuento aplicables con mas de 3 productos.");
+                header("Location: /Cart");
+            }
+        }
+
         $userSession = SessionManager::GetUserSession();
         if($userSession["UserID"] == null)
         {
