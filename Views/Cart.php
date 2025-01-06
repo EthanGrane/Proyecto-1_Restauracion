@@ -8,20 +8,22 @@ $exception = SessionManager::GetException();
 $cart = CookieHandler::GetCart();
 
 try {
-    $dao = new DAO();
-    $cartData = $dao->GetProductsDataByIDs($cart);
-    $dao->CloseConnection();
+    if ($cart != null) {
+        $dao = new DAO();
+        $cartData = $dao->GetProductsDataByIDs($cart);
+        $dao->CloseConnection();
 
-    /*
-     * Recoje la informacion de los productos para poder calcular el precio final.
-     * Esto se hace ya que el carrito solo guarda las ID's
-     */
-    $cartItems = [];
-    foreach ($cart as $productId) {
-        for ($i = 0; $i < count($cartData); $i++) {
-            if ($productId == $cartData[$i]["id_products"]) {
-                array_push($cartItems, $cartData[$i]);
-                continue;
+        /*
+         * Recoje la informacion de los productos para poder calcular el precio final.
+         * Esto se hace ya que el carrito solo guarda las ID's
+         */
+        $cartItems = [];
+        foreach ($cart as $productId) {
+            for ($i = 0; $i < count($cartData); $i++) {
+                if ($productId == $cartData[$i]["id_products"]) {
+                    array_push($cartItems, $cartData[$i]);
+                    continue;
+                }
             }
         }
     }
@@ -125,16 +127,16 @@ try {
                             ?>
 
                             <div class="alert alert-danger" role="alert">
-                                <?=$exception?>
+                                <?= $exception ?>
                             </div>
-                        <?php
+                            <?php
                         }
                         ?>
 
                         <hr>
 
                         <input type="submit" class="btn btn-primary w-100 p-3" value="Comprar">
-                    <?php
+                        <?php
                     }
                     ?>
 

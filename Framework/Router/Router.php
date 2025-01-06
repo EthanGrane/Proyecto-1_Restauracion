@@ -55,7 +55,6 @@ class Router
 
     public static function GetPage(array $view, array $query = [])
     {
-        var_dump($view);
         
         if ($view === null) {
             echo "View not found.";

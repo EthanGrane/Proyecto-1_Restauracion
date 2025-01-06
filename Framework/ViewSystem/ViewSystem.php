@@ -11,8 +11,6 @@ class ViewSystem
         if($title == null)
             $title = $viewName;
         
-        echo ("Print view " .$viewName);
-
         $viewPath = self::VIEW_FOLDER . $viewName . ".php";
         require_once(self::TEMPLATE_PATH);
     }
