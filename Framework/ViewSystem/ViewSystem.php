@@ -2,9 +2,9 @@
 
 class ViewSystem
 {
-    public const TEMPLATE_PATH = "Views\Layout\Templates\Template_View.php";
-    public const VIEW_FOLDER = "Views\\";
-    public const RESOURCES_PATH = "Views\Resources\\";
+    public const TEMPLATE_PATH = "Views/Layout/Templates/Template_View.php";
+    public const VIEW_FOLDER = "Views/";
+    public const RESOURCES_PATH = "Views/Resources/";
 
     public static function PrintView($viewName, $title = null)
     {
@@ -22,7 +22,7 @@ class ViewSystem
         $url = $type . "_" . $name . ".png";
         $url = self::RESOURCES_PATH . $url;
 
-        require("Views\Layout\Templates\Template_ProductCard.php");
+        require("Views/Layout/Templates/Template_ProductCard.php");
     }
 
     public static function PrintCartItem($data)
@@ -32,7 +32,7 @@ class ViewSystem
         $type = $data["type"];
         $id = $data["id_products"];
         
-        require("Views\Layout\Templates\Template_CartItem.php");
+        require("Views/Layout/Templates/Template_CartItem.php");
     }
 }
 
