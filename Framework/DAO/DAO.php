@@ -218,9 +218,9 @@ class DAO
     {
         $query = "INSERT INTO Web.Orders (`id_user`, `id_discount`, `date`, `final_price`) VALUES (?, ?, ?,?);";
         $date = date("Y-m-d");
-
+    
         $this->DebugPrint("CreateNewOrder with value: $userID, $discountCode, $date");
-
+    
         // Recoje toda la informacion sobre los productos. (mismo codigo que en Cart.php seccion try{})
         $cartItems = [];
         $cartData = $this->GetProductsDataByIDs($productIdsArray);
@@ -232,53 +232,64 @@ class DAO
                 }
             }
         }
-
-        // Calcula el precio final
-        $finalPrice = 0.0;
+    
+        // Calcula el precio total antes del IVA
+        $totalPrice = 0.0;
         for ($i = 0; $i < count($cartItems); $i++) {
             $sum = $cartItems[$i]["price"];
-            $finalPrice += $sum;
-            $this->DebugPrint("Final Price += $sum");
+            $totalPrice += $sum;
+            $this->DebugPrint("Total Price += $sum");
         }
-        $this->DebugPrint("Final Price without discount: $finalPrice");
-
-        // Resta el descuento al precio total
+        $this->DebugPrint("Total Price before VAT: $totalPrice");
+    
+        // IVA: Agregar el 10% de IVA al total
+        $totalPriceWithVAT = $totalPrice * 1.1; // IVA del 10%
+        $this->DebugPrint("Total Price with VAT: $totalPriceWithVAT");
+    
+        // Resta el descuento al precio total (con IVA ya aplicado)
+        $finalPrice = $totalPriceWithVAT;
+    
         if ($discountCode != null) {
             $discountData = $this->GetDiscountDataByCode($discountCode);
             $discountValue = 0.0;
-
+    
             $this->DebugPrint("Discount type:" . $discountData["discount_type"]);
             $this->DebugPrint("Discount Value:" . $discountData["value"]);
-
+    
             if ($discountData["discount_type"] == 0) {
+                // Descuento en porcentaje
                 $discountValue = $finalPrice * ($discountData["value"] * 0.01);
-                // Respeta que el numero tenga 2 decimales.
                 $discountValue = number_format($discountValue, 2, '.', '');
             } elseif ($discountData["discount_type"] == 1) {
+                // Descuento fijo
                 $discountValue = $discountData["value"];
-                // Respeta que el numero tenga 2 decimales.
                 $discountValue = number_format($discountValue, 2, '.', '');
             }
-
+    
+            // Aplica el descuento al precio con IVA
             $finalPrice -= $discountValue;
             $this->DebugPrint("Final Price with discount: $finalPrice");
 
         }
+    
+        $finalPrice = number_format($finalPrice, 2, '.', '');
 
-        // Ejecuta SQL
+        // Ejecuta SQL para insertar el nuevo pedido
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("iisd", $userID, $discountData["id_discount"], $date, $finalPrice);
         $stmt->execute();
-
-        //Recoje la id auto-generada
+    
+        // Recoje la id auto-generada
         $orderID = $this->conn->insert_id;
-
+    
         $stmt->close();
-
+    
+        // Inserta los productos en la orden
         for ($i = 0; $i < count($productIdsArray); $i++) {
             $this->CreateOrderProduct($productIdsArray[$i], $orderID);
         }
     }
+    
 
     private function CreateOrderProduct($productID, $orderID)
     {

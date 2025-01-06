@@ -4,8 +4,7 @@ include_once("Framework/ViewSystem/ViewSystem.php");
 include_once("Framework/CookieHandler/CookieHandler.php");
 include_once("Framework/SessionManager/SessionManager.php");
 
-try 
-{
+try {
     // Esto evita que puedas añadir mas items al carro mientras estas en el checkout
     $cart = json_decode($_POST["cartItems"], true);
     $discountCode = $_POST["discountCode"];
@@ -13,12 +12,12 @@ try
     // DAO
     $dao = new DAO();
 
-        // Product data
+    // Product data
     $cartData = $dao->GetProductsDataByIDs($cart);
 
-        // Discount data
+    // Discount data
     if ($discountCode != "")
-    $discountData = $dao->GetDiscountDataByCode($discountCode);
+        $discountData = $dao->GetDiscountDataByCode($discountCode);
 
     $dao->CloseConnection();
     // DAO END
@@ -27,21 +26,16 @@ try
 
     // Guarda los datos de los productos del carrito para mostrarlos posteriormente.
     $cartItems = [];
-    foreach ($cart as $productId) 
-    {
-        for ($i = 0; $i < count($cartData); $i++) 
-        {
-            if ($productId == $cartData[$i]["id_products"]) 
-            {
+    foreach ($cart as $productId) {
+        for ($i = 0; $i < count($cartData); $i++) {
+            if ($productId == $cartData[$i]["id_products"]) {
                 array_push($cartItems, $cartData[$i]);
                 continue;
             }
         }
     }
 
-} 
-catch (Exception $e) 
-{
+} catch (Exception $e) {
     $dao = null;
 }
 ?>
@@ -138,59 +132,66 @@ catch (Exception $e)
 
                 // DISCOUNT
                 $discountValue = 0;
-                if ($discountCode != "") 
-                {
-                    if ($discountData["discount_type"] == 0) 
-                    {
+                if ($discountCode != "") {
+                    if ($discountData["discount_type"] == 0) {
                         $discountValue = $totalPrice * ($discountData["value"] * 0.01);
                         // Respeta que el numero tenga 2 decimales.
                         $discountValue = number_format($discountValue, 2, '.', '');
-                    } 
-                    elseif ($discountData["discount_type"] == 1) 
-                    {
+                    } elseif ($discountData["discount_type"] == 1) {
                         $discountValue = $discountData["value"];
                         // Respeta que el numero tenga 2 decimales.
                         $discountValue = number_format($discountValue, 2, '.', '');
                     }
                     ?>
 
-                <div class="d-flex justify-content-between">
-                    <p>Descuento: </p>
-                </div>
-                <div class='d-flex justify-content-end'>
-                    <p>- <?=$discountValue?> €</p>
-                </div>
+                    <div class="d-flex justify-content-between">
+                        <p>Descuento: </p>
+                    </div>
+                    <div class='d-flex justify-content-end'>
+                        <p>- <?= $discountValue ?> €</p>
+                    </div>
 
-                <?php
-                // DISCOUNT END
+                    <?php
+                    // DISCOUNT END
                 }
                 ?>
 
                 <hr>
 
                 <div class="d-flex justify-content-between">
+                    <p>IVA</p>
+                </div>
+                <div class='d-flex justify-content-end'>
+                    <p>
+                        <?= number_format($totalPrice * 0.1, 2, '.', ''); ?> €
+                    </p>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
                     <p>Total:</p>
 
-                    <p <?php 
+                    <p <?php
                     // Aplica un estilo de 'tachado' al <p> si hay un descuento aplicado
-                    if($discountCode != "") echo'style="text-decoration: line-through;"';
+                    if ($discountCode != "")
+                        echo 'style="text-decoration: line-through;"';
                     ?>>
-                    <?= $totalPrice ?>€
+                    <?= number_format($totalPrice * 1.1, 2, '.', ''); ?>€
                     </p>
                 </div>
 
                 <?php
                 // TOTAL DESCUENTO
-                if($discountCode != "")
-                {
-                ?>
+                if ($discountCode != "") {
+                    ?>
 
-                <div class="d-flex justify-content-end">
-                    <p><?= $totalPrice - $discountValue ?>€</p>
-                </div>
+                    <div class="d-flex justify-content-end">
+                        <p><?= $totalPrice - $discountValue ?>€</p>
+                    </div>
 
-                <?php
-                // TOTAL DESCUENTO END
+                    <?php
+                    // TOTAL DESCUENTO END
                 }
                 ?>
 

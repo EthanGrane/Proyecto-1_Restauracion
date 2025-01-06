@@ -110,8 +110,19 @@ try {
                 <hr>
 
                 <div class="d-flex justify-content-between">
+                    <p>IVA</p>
+                </div>
+                <div class='d-flex justify-content-end'>
+                    <p>
+                        <?= number_format($totalPrice * 0.1, 2, '.', ''); ?>
+                    </p>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
                     <p>Total:</p>
-                    <p><?= $totalPrice ?>€</p>
+                    <p><?= number_format($totalPrice * 1.1, 2, '.', '') ?>€</p>
                 </div>
 
                 <form action="/Cart/Checkout" method="POST">
