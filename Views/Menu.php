@@ -1,7 +1,7 @@
 <?php
-include_once("Framework\DAO\DAO.php");
-include_once("Framework\ViewSystem\ViewSystem.php");
-include_once("Framework\CookieHandler\CookieHandler.php");
+include_once("Framework/DAO/DAO.php");
+include_once("Framework/ViewSystem/ViewSystem.php");
+include_once("Framework/CookieHandler/CookieHandler.php");
 
 try {
     $dao = new DAO();

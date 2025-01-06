@@ -1,8 +1,8 @@
 <?php
-include_once("Framework\DAO\DAO.php");
-include_once("Framework\ViewSystem\ViewSystem.php");
-include_once("Framework\CookieHandler\CookieHandler.php");
-include_once("Framework\SessionManager\SessionManager.php");
+include_once("Framework/DAO/DAO.php");
+include_once("Framework/ViewSystem/ViewSystem.php");
+include_once("Framework/CookieHandler/CookieHandler.php");
+include_once("Framework/SessionManager/SessionManager.php");
 
 try 
 {
@@ -57,7 +57,7 @@ catch (Exception $e)
 
             <!-- Checkout Form -->
             <div class="col-8">
-                <form action="\cart\finish" method="POST">
+                <form action="/cart/finish" method="POST">
                     <input type="hidden" name="cartItems" value='<?php echo $_POST["cartItems"]; ?>'>
                     <input type="hidden" name="discountCode" value='<?php echo $_POST["discountCode"]; ?>'>
 

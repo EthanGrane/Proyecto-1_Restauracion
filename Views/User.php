@@ -1,11 +1,11 @@
 <?php
-require_once("Framework\SessionManager\SessionManager.php");
+require_once("Framework/SessionManager/SessionManager.php");
 
 $userSession = SessionManager::GetUserSession();
 ?>
 
 <div class="container d-flex w-100 justify-content-end">
-    <a href="\user\logout" class="btn btn-secondary m-3">Logout</a>
+    <a href="/user/logout" class="btn btn-secondary m-3">Logout</a>
 </div>
 
 <!-- Perfil de usuario -->

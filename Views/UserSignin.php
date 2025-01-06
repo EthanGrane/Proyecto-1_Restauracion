@@ -40,7 +40,7 @@
 
             <!-- Entrar en cuenta -->
             <div class="col-12 text-center">
-                <a class="text-secondary text-decoration-none" href="\Login">Ya tienes una cuenta?</a>
+                <a class="text-secondary text-decoration-none" href="/Login">Ya tienes una cuenta?</a>
             </div>
         </form>
 

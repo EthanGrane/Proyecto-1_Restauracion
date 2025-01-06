@@ -1,8 +1,8 @@
 <?php
-include_once("Framework\DAO\DAO.php");
-include_once("Framework\ViewSystem\ViewSystem.php");
-include_once("Framework\CookieHandler\CookieHandler.php");
-include_once("Framework\SessionManager\SessionManager.php");
+include_once("Framework/DAO/DAO.php");
+include_once("Framework/ViewSystem/ViewSystem.php");
+include_once("Framework/CookieHandler/CookieHandler.php");
+include_once("Framework/SessionManager/SessionManager.php");
 
 $exception = SessionManager::GetException();
 $cart = CookieHandler::GetCart();
@@ -109,7 +109,7 @@ try {
                     <p><?= $totalPrice ?>€</p>
                 </div>
 
-                <form action="\Cart\Checkout" method="POST">
+                <form action="/Cart/Checkout" method="POST">
                     <input type="hidden" name="cartItems" value='<?php echo json_encode(CookieHandler::GetCart()); ?>'>
 
                     <?php
