@@ -54,7 +54,9 @@ class UserController
         } 
         finally 
         {
-            $dao->CloseConnection();
+            if($dao != null)
+                $dao->CloseConnection();
+            
             header("Location: /login");
         }
 
