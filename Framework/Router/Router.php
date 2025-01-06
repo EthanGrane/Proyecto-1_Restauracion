@@ -67,7 +67,7 @@ class Router
             return;
         }
 
-        include_once("controller/$controllerName.php");
+        include_once("Controller/$controllerName.php");
 
         if (!class_exists($controllerName)) {
             echo "Controller class not found: $controllerName";
