@@ -30,6 +30,7 @@ class UserController
         $mail = $_POST["email"];
         $password = $_POST["password"];
 
+        $dao = null;
         try 
         {
             $dao = new DAO(true);

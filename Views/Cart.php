@@ -40,6 +40,8 @@ try {
         <h1>My Cart</h1>
 
         <?php
+        $cartItems = isset($cartItems) ? $cartItems : [];
+
         if (count($cartItems) > 0) {
             ?>
 
@@ -51,6 +53,7 @@ try {
 
             <?php
         }
+
         ?>
 
     </div>
