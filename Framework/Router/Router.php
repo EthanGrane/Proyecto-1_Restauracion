@@ -62,7 +62,7 @@ class Router
 
         $controllerName = $view["controller"] . "Controller";
 
-        if (!file_exists("controller/$controllerName.php")) {
+        if (!file_exists("Controller/$controllerName.php")) {
             echo "Controller file not found: $controllerName.php";
             return;
         }
