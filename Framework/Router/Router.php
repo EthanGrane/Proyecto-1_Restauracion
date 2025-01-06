@@ -55,6 +55,8 @@ class Router
 
     public static function GetPage(array $view, array $query = [])
     {
+        var_dump($view);
+        
         if ($view === null) {
             echo "View not found.";
             return;
@@ -96,12 +98,12 @@ class Router
     {
         if($method == "POST")
         {
-            $view = Router_List::$Routes["/StatusCode"];
+            $view = Router_List::$Routes["/statuscode"];
             return ["view" => $view, "query" => [""]];
         }
         else if ($method == "GET")
         {
-            $view = Router_List::$Routes["/StatusCode"];
+            $view = Router_List::$Routes["/statuscode"];
             return ["view" => $view, "query" => [""]];
         }
     }
