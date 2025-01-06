@@ -4,7 +4,7 @@
 
         <!-- Imagen del producto -->
         <div class="col-3 col-md-2">
-            <img src="Views\Resources\<?= $type ?>_<?= $name ?>.png" alt="<?= $name ?>" class="img-fluid"
+            <img src="Views/Resources/<?= $type ?>_<?= $name ?>.png" alt="<?= $name ?>" class="img-fluid"
                 style="max-height: 100px; width: auto;">
         </div>
 
@@ -40,7 +40,7 @@
 
         <!-- Imagen del producto -->
         <div class="col-3 col-md-2">
-            <img src="Views\Resources\<?= $type ?>_<?= $name ?>.png" alt="<?= $name ?>" class="img-fluid"
+            <img src="Views/Resources/<?= $type ?>_<?= $name ?>.png" alt="<?= $name ?>" class="img-fluid"
                 style="max-height: 100px; width: auto;">
         </div>
 
@@ -73,7 +73,7 @@
 
         <!-- Imagen del producto -->
         <div class="col-4 col-md-2">
-            <img src="Views\Resources\<?= $type ?>_<?= $name ?>.png" alt="<?= $name ?>" class="img-fluid"
+            <img src="Views/Resources/<?= $type ?>_<?= $name ?>.png" alt="<?= $name ?>" class="img-fluid"
                 style="max-height: 100px; width: auto;">
         </div>
 

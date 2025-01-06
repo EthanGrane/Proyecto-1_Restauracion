@@ -8,12 +8,12 @@ class AdminController
 {
     public function index()
     {
-        include_once("Views\AdminPanel\Index.html");
+        include_once("Views/AdminPanel/Index.html");
     }
 
     public function users()
     {
-        include_once("Views\AdminPanel\Users.html");
+        include_once("Views/AdminPanel/Users.html");
     }
 }   
 

@@ -1,8 +1,8 @@
 <?php
-require_once("Framework\CookieHandler\CookieHandler.php");
-require_once("Framework\SessionManager\SessionManager.php");
-include_once("Framework\ViewSystem\ViewSystem.php");
-include_once("Framework\DAO\DAO.php");
+require_once("Framework/CookieHandler/CookieHandler.php");
+require_once("Framework/SessionManager/SessionManager.php");
+include_once("Framework/ViewSystem/ViewSystem.php");
+include_once("Framework/DAO/DAO.php");
 
 class UserController
 {
@@ -21,7 +21,7 @@ class UserController
         } 
         else 
         {
-            header("Location: \user");
+            header("Location: /user");
         }
     }
 
@@ -45,7 +45,7 @@ class UserController
                     $data["mail"]
                 );
                 
-                header("Location: \user");
+                header("Location: /user");
             } 
         } 
         catch (Exception $e) 
@@ -55,7 +55,7 @@ class UserController
         finally 
         {
             $dao->CloseConnection();
-            header("Location: \login");
+            header("Location: /login");
         }
 
     }
@@ -65,7 +65,7 @@ class UserController
         if (SessionManager::GetUserSession()["UserID"] == null) {
             ViewSystem::PrintView("UserSignin");
         } else {
-            header("Location: \user");
+            header("Location: /user");
         }
 
     }
@@ -86,25 +86,25 @@ class UserController
 
             $dao->CloseConnection();
 
-            header("Location: \user");
+            header("Location: /user");
         } 
         catch (Exception $e) 
         {
             SessionManager::SetException($e->getMessage());
-            header("Location: \signin");
+            header("Location: /signin");
         }
     }
 
     public function Logout()
     {
-        header("Location: \login");
+        header("Location: /login");
         SessionManager::DestroyUserSession();
     }
 
     private static function CheckUserIsLogged()
     {
         if (SessionManager::GetUserSession()["UserID"] == null) {
-            header("Location: \login");
+            header("Location: /login");
             exit();
         }
     }

@@ -1,8 +1,8 @@
 <?php
 
-require_once("Framework\CookieHandler\CookieHandler.php");
-require_once("Framework\SessionManager\SessionManager.php");
-require_once("Framework\DAO\DAO.php");
+require_once("Framework/CookieHandler/CookieHandler.php");
+require_once("Framework/SessionManager/SessionManager.php");
+require_once("Framework/DAO/DAO.php");
 require_once("Framework/ViewSystem/ViewSystem.php");
 
 class CartController
