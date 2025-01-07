@@ -25,32 +25,39 @@
 
 .CardTitle
 {
-    text-shadow: black 0px 1px 5px;
+    text-shadow: black 0px 1px 5px !important;
 
-    font-size: 8vw;
+    color: white !important;
+
+    font-size: 8vw !important;
 
     text-align: center;
 
-    font-weight: 700;
+    font-weight: 700 !important;
 
     margin: 0;
 }
 
 .CardSubTitle
 {
-    font-size: 2.5vw;
+    color: white !important;
+
+    font-size: 2.5vw !important;
 
     text-align: center;
 
-    font-weight: 100;
+    font-weight: 100 !important;
 
     margin: 0;
     margin-left: 20%;
     margin-right: 20%;
 }
 
-.CardLink {
-    font-size: 1.5vw;
+.CardLink 
+{
+    text-shadow: black 0px 1px 5px !important;
+
+    font-size: 1.5vw !important;
     text-align: center;
     text-decoration: none;
 

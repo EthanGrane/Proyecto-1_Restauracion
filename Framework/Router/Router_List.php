@@ -38,7 +38,9 @@ class Router_List
             // GET
         "/adminpanel" => ["controller" => "Admin", "action" => ["GET" => "index"]],
         "/adminpanel/users" => ["controller" => "Admin", "action" => ["GET" => "users"]],
-        "/api" => ["controller" => "Main", "action" => ["GET" => "api"]],
+        "/adminpanel/products" => ["controller" => "Admin", "action" => ["GET" => "products"]],
+        "/adminpanel/discounts" => ["controller" => "Admin", "action" => ["GET" => "discounts"]],
+        "/api" => ["controller" => "Main", "action" => ["GET" => "api", "POST" => "api"]],
     ];
 }
 ?>

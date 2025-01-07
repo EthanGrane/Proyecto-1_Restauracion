@@ -36,16 +36,18 @@ class SessionManager
         return [
             "UserID" => $_SESSION["UserID"],
             "UserName" => $_SESSION["UserName"],
-            "UserMail" => $_SESSION["UserMail"]
+            "UserMail" => $_SESSION["UserMail"],
+            "UserPassword" => $_SESSION["UserPassword"]
         ];
     }
 
-    public static function SetUserSession($userID, $userName, $userMail)
+    public static function SetUserSession($userID, $userName, $userMail, $hashPassword)
     {
         self::EnsureSessionStarted();
         $_SESSION["UserID"] = $userID;
         $_SESSION["UserName"] = $userName;
         $_SESSION["UserMail"] = $userMail;
+        $_SESSION["UserPassword"] = $hashPassword;
     }
 
     public static function DestroyUserSession()

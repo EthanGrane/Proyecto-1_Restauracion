@@ -43,7 +43,8 @@ class UserController
                 SessionManager::SetUserSession(
                     $data["id_user"],
                     $data["name"],
-                    $data["mail"]
+                    $data["mail"],
+                    $data["password"]
                 );
                 
                 header("Location: /user");
@@ -85,7 +86,7 @@ class UserController
             $dao->AddUserToBBDD($username, $email, $password);
 
             $data = $dao->GetUserDataByMailAndPassword($email, $password);
-            SessionManager::SetUserSession($data["id_user"], $data["name"], $data["mail"]);
+            SessionManager::SetUserSession($data["id_user"], $data["name"], $data["mail"], $data["password"]);
 
             $dao->CloseConnection();
 

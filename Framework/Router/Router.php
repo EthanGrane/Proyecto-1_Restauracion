@@ -22,7 +22,6 @@ class Router
         // La ruta esta almacenada en Router_List.php ?
         if (!isset(Router_List::$Routes[$path])) 
         {
-            var_dump($path);
             return self::PageNotFound($method);
         }
 
