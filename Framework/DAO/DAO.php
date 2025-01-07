@@ -501,6 +501,21 @@ class DAO
         return $data;
     }
 
+    public function CreateDiscount($discountCode, $discountAmount, $discountType, $discountValid)
+    {
+        $query = "INSERT INTO Discount (discount_code, discount_type, value, valid) 
+              VALUES (?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("sidi", $discountCode, $discountType, $discountAmount, $discountValid);
+        $result = $stmt->execute();
+        if ($result) {
+            SendResponse("Discount created successfully", 200); // OK
+        } else {
+            SendResponse("Failed to create discount", 500); // Internal server error
+        }   
+        $stmt->close();
+    }
+
     public function DeleteDiscount($discountId)
     {
         $query = "DELETE FROM Discount WHERE id_discount = ?";

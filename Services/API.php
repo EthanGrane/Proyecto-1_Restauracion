@@ -139,7 +139,7 @@ function EditProduct()
     }
 }
 
-function AddNewProduct()
+function CreateProduct()
 {
     if (
         isset($_GET["adminMail"]) &&
@@ -230,8 +230,48 @@ function GetAllDiscounts()
 
 function CreateDiscount()
 {
-    
+    if (
+        isset($_GET["adminMail"]) &&
+        isset($_GET["adminPassword"]) &&
+        isset($_GET["discountCode"]) &&
+        isset($_GET["discountAmount"]) &&
+        isset($_GET["discountType"]) &&
+        isset($_GET["discountValid"])
+    ) {
+        $adminMail = $_GET["adminMail"];
+        $adminPassword = $_GET["adminPassword"];
+        $discountCode = $_GET["discountCode"];
+        $discountAmount = $_GET["discountAmount"];
+        $discountType = $_GET["discountType"];
+        $discountValid = $_GET["discountValid"];
+
+        // Validación de los datos recibidos
+        if (!is_numeric($discountAmount) || $discountAmount < 0 || $discountAmount > 100) {
+            SendResponse("El monto del descuento debe estar entre 0 y 100", 400);
+            return;
+        }
+
+        $dao = new DAO();
+
+        if (VerifyAdmin($adminMail, $adminPassword)) {
+            // Llamada a la función DAO con los parámetros correctos
+            $result = $dao->CreateDiscount($discountCode, $discountAmount, $discountType, $discountValid);
+
+            if ($result) {
+                SendResponse("Descuento creado con éxito", 200);
+            } else {
+                SendResponse("Error al crear el descuento", 500);
+            }
+        } else {
+            SendResponse("Credenciales de administrador incorrectas", 401);
+        }
+
+        $dao->CloseConnection();
+    } else {
+        SendResponse("Faltan parámetros", 400);
+    }
 }
+
 
 function DeleteDiscount()
 {
@@ -304,7 +344,7 @@ function GET()
             break;
 
         case "CreateProduct":
-            AddNewProduct();
+            CreateProduct();
             break;
 
         case "DeleteProduct":

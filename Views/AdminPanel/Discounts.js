@@ -58,14 +58,15 @@ async function ShowAllDiscounts()
     }
 }
 
-async function CreateDiscount() {
+async function CreateDiscount() 
+{
     // Obtener los valores de los campos del formulario
     let discountCode = document.getElementById("Create-DiscountCode").value;
     let discountAmount = document.getElementById("Create-DiscountAmount").value;
     let discountType = document.getElementById("Create-ProductType").value;
     let productState = document.getElementById("Create-ProductState").checked;
 
-    let apiUrl = API_ADDRESS + `?method=CreateDiscount&adminMail=${adminMail}&adminPassword=${adminPassword}&discountId=${data.data[arrayId]["id_discount"]}`;
+    let apiUrl = API_ADDRESS + `?method=CreateDiscount&adminMail=${adminMail}&adminPassword=${adminPassword}&discountCode=${discountCode}&discountAmount=${discountAmount}&discountType=${discountType}&discountValid=${productState}`;
     console.log(apiUrl);
     let response = await fetch(apiUrl);
     data = await response.json();
