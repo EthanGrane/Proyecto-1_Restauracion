@@ -20,11 +20,13 @@ class DAO
 
     private function OpenConnection()
     {
-        $servername = "localhost";
-        $port = "33060";
-        $username = "root";
-        $password = "root";
-        $database = "Web";
+        $env = parse_ini_file('.env');
+        $servername = $env['DB_HOST'];
+        $username = $env['DB_USER'];
+        $password = $env['DB_PASS'];
+        $database = $env['DB_NAME'];
+        $port = $env['DB_PORT'];
+
         $this->conn = new mysqli($servername, $username, $password, $database, $port);
     }
 
@@ -35,10 +37,15 @@ class DAO
         $this->DebugPrint("connection closed");
     }
 
+    public function GetConnection()
+    {
+        return $this->conn;
+    }
+
     #region User
     public function GetUserDataByMailAndPassword($mailParam, $hashPasswordParam)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Users WHERE mail = ?");
+        $stmt = $this->conn->prepare("SELECT * FROM user WHERE mail = ?");
         $stmt->bind_param("s", $mailParam);
         $stmt->execute();
 
@@ -60,7 +67,9 @@ class DAO
 
     public function ValidateUser($mailParam, $hashPasswordParam)
     {
-        $stmt = $this->conn->prepare("SELECT id_user, password FROM Users WHERE mail = ?");
+        error_log($mailParam);
+
+        $stmt = $this->conn->prepare("SELECT id, password FROM user WHERE mail = ?");
         $stmt->bind_param("s", $mailParam);
         $stmt->execute();
 
@@ -76,13 +85,13 @@ class DAO
                 throw new Exception("Email or Password incorrect.");
             }
         } else {
-            throw new Exception("Email or Password incorrect.");
+            throw new Exception("User don't exist.");
         }
     }
 
     public function GetAllUsersFromBBDD($limit = 100)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM Users LIMIT ?");
+        $stmt = $this->conn->prepare("SELECT * FROM user LIMIT ?");
         $stmt->bind_param("i", $limit);
         $stmt->execute();
 
@@ -99,19 +108,19 @@ class DAO
         }
     }
 
-    public function UpdateUser($username, $email, $password, $role)
+    public function UpdateUser($username, $mail, $password, $role)
     {
-        $stmt = $this->conn->prepare("UPDATE Users SET name = ?, mail = ?,password = ?, role = ? WHERE mail = ?");
+        $stmt = $this->conn->prepare("UPDATE user SET name = ?, mail = ?,password = ?, role = ? WHERE mail = ?");
 
         $hashPass = password_hash($password, PASSWORD_DEFAULT);
-        $stmt->bind_param("sssis", $username, $email, $hashPass, $role, $email);
+        $stmt->bind_param("sssis", $username, $mail, $hashPass, $role, $mail);
 
         if ($stmt->execute()) {
             return [
                 "message" => "Usuario actualizado con éxito",
                 "username" => $username,
                 "password" => $hashPass,
-                "email" => $email,
+                "mail" => $mail,
                 "role" => $role
             ];
         } else {
@@ -121,17 +130,17 @@ class DAO
         }
     }
 
-    public function UpdateUserWithoutPassword($username, $email, $role)
+    public function UpdateUserWithoutPassword($username, $mail, $role)
     {
-        $stmt = $this->conn->prepare("UPDATE Users SET name = ?, mail = ?, role = ? WHERE mail = ?");
+        $stmt = $this->conn->prepare("UPDATE user SET name = ?, mail = ?, role = ? WHERE mail = ?");
 
-        $stmt->bind_param("ssis", $username, $email, $role, $email);
+        $stmt->bind_param("ssis", $username, $mail, $role, $mail);
 
         if ($stmt->execute()) {
             return [
                 "message" => "Usuario actualizado con éxito",
                 "username" => $username,
-                "email" => $email,
+                "mail" => $mail,
                 "role" => $role
             ];
         } else {
@@ -141,47 +150,14 @@ class DAO
         }
     }
 
-    public function AddUserToBBDD($userName, $userMail, $userPassword)
+    public function AddUserToBBDD($user)
     {
-        $this->ValidateNewUserData($userName, $userMail, $userPassword);
-
         // Encriptar la contraseña con password_hash
-        $hashPass = password_hash($userPassword, PASSWORD_DEFAULT);
-        $userPassword = null; // Limpiar la variable de la contraseña en texto claro
+        $hashPass = password_hash($user->GetPassword(), PASSWORD_DEFAULT);
 
-        $stmt = $this->conn->prepare("INSERT INTO Web.Users (name, mail, password, role) VALUES (?, ?, ?, '0')");
-        $stmt->bind_param("sss", $userName, $userMail, $hashPass);
+        $stmt = $this->conn->prepare("INSERT INTO user (name, mail, password, role) VALUES (?, ?, ?, '0')");
+        $stmt->bind_param("sss", $user->GetName(), $user->GetMail(), $hashPass);
         $stmt->execute();
-    }
-
-    private function ValidateNewUserData($userName, $userMail, $userPassword)
-    {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM Web.Users WHERE mail = ?");
-        if (!$stmt) {
-            throw new Exception("Error preparing statement: " . $this->conn->error);
-        }
-
-        $stmt->bind_param("s", $userMail);
-        $stmt->execute();
-        $stmt->bind_result($count);
-
-        if (!$stmt->fetch()) {
-            throw new Exception("Error fetching result.");
-        }
-
-        $stmt->close();
-
-        if ($count > 0) {
-            throw new Exception("Email is already registered.");
-        }
-
-        if (strlen($userName) > 25) {
-            throw new Exception("Username is too long.");
-        }
-
-        if (strlen($userPassword) < 6) {
-            throw new Exception("Password must be at least 6 characters long.");
-        }
     }
 
 
@@ -308,7 +284,7 @@ class DAO
     #region Orders
     public function GetOrdersByUserId($userID)
     {
-        $query = "SELECT * FROM Web.Orders WHERE id_user = ?";
+        $query = "SELECT * FROM Orders WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $userID);
         $stmt->execute();
@@ -326,7 +302,7 @@ class DAO
 
     public function GetProductsByOrderId($orderID)
     {
-        $query = "SELECT * FROM Web.Orders_Products WHERE id_order = ?";
+        $query = "SELECT * FROM Orders_Products WHERE id_order = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $orderID);
         $stmt->execute();
@@ -344,7 +320,7 @@ class DAO
 
     public function CreateNewOrder($userID, $discountCode, $productIdsArray)
     {
-        $query = "INSERT INTO Web.Orders (`id_user`, `id_discount`, `date`, `final_price`) VALUES (?, ?, ?,?);";
+        $query = "INSERT INTO Orders (`id`, `id_discount`, `date`, `final_price`) VALUES (?, ?, ?,?);";
         $date = date("Y-m-d");
 
         $this->DebugPrint("CreateNewOrder with value: $userID, $discountCode, $date");
@@ -421,7 +397,7 @@ class DAO
 
     private function CreateOrderProduct($productID, $orderID)
     {
-        $query = "INSERT INTO Web.Orders_Products (`id_order`, `id_product`, `amount`) VALUES (?, ?, 1);";
+        $query = "INSERT INTO Orders_Products (`id_order`, `id_product`, `amount`) VALUES (?, ?, 1);";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("ii", $orderID, $productID);
@@ -441,7 +417,7 @@ class DAO
      */
     public function IsDiscountCodeValid($discountCode)
     {
-        $query = "SELECT * FROM Web.Discount WHERE discount_code = ?";
+        $query = "SELECT * FROM Discount WHERE discount_code = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $discountCode);
         $stmt->execute();
@@ -460,7 +436,7 @@ class DAO
     public function GetDiscountDataByCode($discountCode)
     {
         if ($this->IsDiscountCodeValid($discountCode)) {
-            $query = "SELECT * FROM Web.Discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
+            $query = "SELECT * FROM Discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
             $stmt = $this->conn->prepare($query);
             $stmt->bind_param("s", $discountCode);
             $stmt->execute();
@@ -475,7 +451,7 @@ class DAO
 
     public function GetDiscountDataById($discountID)
     {
-        $query = "SELECT * FROM Web.Discount WHERE id_discount = ? LIMIT 1";
+        $query = "SELECT * FROM Discount WHERE id_discount = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $discountID);
         $stmt->execute();

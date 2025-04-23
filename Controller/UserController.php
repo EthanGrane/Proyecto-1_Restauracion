@@ -1,4 +1,5 @@
 <?php
+require_once("Model/User.php");
 require_once("Framework/CookieHandler/CookieHandler.php");
 require_once("Framework/SessionManager/SessionManager.php");
 include_once("Framework/ViewSystem/ViewSystem.php");
@@ -14,13 +15,10 @@ class UserController
     }
 
     public function ViewLogin()
-    {        
-        if (SessionManager::GetUserSession()["UserID"] == null) 
-        {
+    {
+        if (SessionManager::GetUserSession()["UserID"] == null) {
             ViewSystem::PrintView("UserLogin");
-        } 
-        else 
-        {
+        } else {
             header("Location: /user");
         }
     }
@@ -31,34 +29,28 @@ class UserController
         $password = $_POST["password"];
 
         $dao = null;
-        try 
-        {
+        try {
             $dao = new DAO(true);
             $validation = $dao->ValidateUser($mail, $password);
 
-            if ($validation) 
-            {
+            if ($validation) {
                 $data = $dao->GetUserDataByMailAndPassword($mail, $password);
 
                 SessionManager::SetUserSession(
-                    $data["id_user"],
+                    $data["id"],
                     $data["name"],
                     $data["mail"],
                     $data["password"]
                 );
-                
+
                 header("Location: /user");
-            } 
-        } 
-        catch (Exception $e) 
-        {
+            }
+        } catch (Exception $e) {
             SessionManager::SetException($e->getMessage());
-        } 
-        finally 
-        {
-            if($dao != null)
+        } finally {
+            if ($dao != null)
                 $dao->CloseConnection();
-            
+
             header("Location: /login");
         }
 
@@ -76,24 +68,29 @@ class UserController
 
     public function Signin()
     {
-        try 
-        {
-            $username = $_POST["name"];
-            $email = $_POST["email"];
+        try {
+            $name = $_POST["name"];
+            $mail = $_POST["mail"];
             $password = $_POST["password"];
 
+            // Crear el objeto User
+            $user = new User($name, $mail, $password);
             $dao = new DAO();
-            $dao->AddUserToBBDD($username, $email, $password);
 
-            $data = $dao->GetUserDataByMailAndPassword($email, $password);
-            SessionManager::SetUserSession($data["id_user"], $data["name"], $data["mail"], $data["password"]);
+            // Validar los datos del usuario (esto está ahora en el modelo User)
+            $user->ValidateUserData($dao->GetConnection());
+
+            // Añadir usuario a la base de datos
+            $dao->AddUserToBBDD($user);
+
+            // Obtener los datos del usuario recién creado
+            $data = $dao->GetUserDataByMailAndPassword($mail, $password);
+            SessionManager::SetUserSession($data["id"], $data["name"], $data["mail"], $data["password"]);
 
             $dao->CloseConnection();
 
             header("Location: /user");
-        } 
-        catch (Exception $e) 
-        {
+        } catch (Exception $e) {
             SessionManager::SetException($e->getMessage());
             header("Location: /signin");
         }
