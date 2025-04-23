@@ -14,7 +14,7 @@
             <!-- Email -->
             <div class="col-12 w-100">
                 <label for="email" class="form-label text-light">Correo Electrónico</label>
-                <input type="email" name="email" id="email" class="form-control" placeholder="RazerUser@gmail.com"
+                <input type="email" name="mail" id="mail" class="form-control" placeholder="RazerUser@gmail.com"
                     required>
             </div>
 
