@@ -1,7 +1,9 @@
 <?php
 require_once("Framework/SessionManager/SessionManager.php");
+$dao = new DAO();
 
 $userSession = SessionManager::GetUserSession();
+$orders = $dao->GetOrdersByUserId($userSession["UserID"]);
 ?>
 
 <div class="container d-flex w-100 justify-content-end">
@@ -34,23 +36,19 @@ $userSession = SessionManager::GetUserSession();
         <div class="row">
 
             <?php
-            $dao = new DAO();
-            $orders = $dao->GetOrdersByUserId($userSession["UserID"]);
-
             if (count($orders) == 0) {
-                ?>
+            ?>
                 <div class="col-12 mb-3">
                     <div class="border rounded p-3 d-flex justify-content-center">
                         <p>No hay ningun registro de un pedido.</p>
                     </div>
                 </div>
-                <?php
+            <?php
             }
 
-            for ($i = 0; $i < count($orders); $i++) 
-            {
-                $ordersProducts = $dao->GetProductsByOrderId($orders[$i]["id_order"]);
-                ?>
+            for ($i = 0; $i < count($orders); $i++) {
+                $ordersProducts = $dao->GetProductsByOrderId($orders[$i]["id"]);
+            ?>
 
                 <div class="col-12 mb-3">
                     <div class="border rounded p-3">
@@ -62,7 +60,7 @@ $userSession = SessionManager::GetUserSession();
                                 <?= count($ordersProducts); ?>
                             </p>
                             <p class="mb-1"><strong>Precio total:</strong>
-                                <?= $orders[$i]["final_price"]; ?> €
+                                <?= $orders[$i]["total_price"]; ?> €
                             </p>
                         </div>
                         <ul>
@@ -71,11 +69,10 @@ $userSession = SessionManager::GetUserSession();
                              * Muestra los productos del pedido y los precios
                              */
                             // Almacena los IDS para pasarlos por la funcion de GetProductDataByIds que devuelve la informacion de los productos desde la BBDD
-                            $productsID = array_column($ordersProducts, 'id_product');
+                            $productsID = array_column($ordersProducts, 'product_id');
                             $productData = $dao->GetProductsDataByIDs($productsID);
 
-                            for ($j = 0; $j < count($productData); $j++) 
-                            {
+                            for ($j = 0; $j < count($productData); $j++) {
                                 echo "
                                 <div class='d-flex justify-content-center'>
                                     <div class='w-50 p-1'>
@@ -88,23 +85,19 @@ $userSession = SessionManager::GetUserSession();
                                 ";
                             }
 
-                            if($orders[$i]["id_discount"] != null)
-                            {
-                                $currentOrderDiscountData = $dao->GetDiscountDataById($orders[$i]["id_discount"]);
-                                
-                                if($currentOrderDiscountData["discount_type"] == 0)
-                                {
-                                    $currentOrderDiscountValue = $orders[$i]["final_price"] * ($currentOrderDiscountData["value"] * 0.01);
-                                }
-                                else if($currentOrderDiscountData["discount_type"] == 1)
-                                {
+                            if ($orders[$i]["discount_id"] != null) {
+                                $currentOrderDiscountData = $dao->GetDiscountDataById($orders[$i]["discount_id"]);
+
+                                if ($currentOrderDiscountData["discount_type"] == 0) {
+                                    $currentOrderDiscountValue = $orders[$i]["total_price"] * ($currentOrderDiscountData["value"] * 0.01);
+                                } else if ($currentOrderDiscountData["discount_type"] == 1) {
                                     $currentOrderDiscountValue = $currentOrderDiscountData["value"];
                                 }
-                                
+
                                 $currentOrderDiscountValue = number_format($currentOrderDiscountValue, 2, '.', '');
 
-                                
-                                echo"
+
+                                echo "
                                 <div class='d-flex justify-content-center'>
                                     <div class='w-50 p-1'>
                                         <div class='d-flex justify-content-between'>
@@ -121,7 +114,7 @@ $userSession = SessionManager::GetUserSession();
                     </div>
                 </div>
 
-                <?php
+            <?php
             }
             ?>
         </div>

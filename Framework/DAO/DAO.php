@@ -166,15 +166,15 @@ class DAO
     #region Product
     public function GetAllProductsByType($type_param)
     {
-        static $WHITELIST = ["MainDish", "Drink"];
+        static $WHITELIST = ["Primary", "Drink"];
 
-        $type = in_array($type_param, $WHITELIST) ? $type_param : "MainDish";
+        $product_type = in_array($type_param, $WHITELIST) ? $type_param : "Primary";
 
-        $query = "SELECT * FROM Products WHERE state = 0 AND type = ? LIMIT 100";
+        $query = "SELECT * FROM product WHERE enabled = 0 AND product_type = ? LIMIT 100";
 
         $stmt = $this->conn->prepare($query);
 
-        $stmt->bind_param("s", $type);
+        $stmt->bind_param("s", $product_type);
 
         $stmt->execute();
 
@@ -189,7 +189,7 @@ class DAO
 
     public function GetAllProducts()
     {
-        $query = "SELECT * FROM Products LIMIT 100";
+        $query = "SELECT * FROM product LIMIT 100";
 
         $stmt = $this->conn->prepare($query);
 
@@ -218,7 +218,7 @@ class DAO
 
         $this->DebugPrint(" · [placeholders]: " . print_r($placeholders, true));
 
-        $query = "SELECT * FROM Products WHERE state = 0 AND id_products IN ($placeholders) LIMIT 100";
+        $query = "SELECT * FROM product WHERE enabled = 0 AND id IN ($placeholders) LIMIT 100";
         $stmt = $this->conn->prepare($query);
 
         $types = str_repeat('i', count($ids));
@@ -235,9 +235,9 @@ class DAO
 
     public function UpdateProduct($productID, $productName, $productDescription, $productPrice, $productType, $productState)
     {
-        $query = "UPDATE Products 
-        SET name = ?, description = ?, price = ?, type = ?, state = ? 
-        WHERE id_products = ?";
+        $query = "UPDATE product 
+        SET name = ?, description = ?, price = ?, product_type = ?, enabled = ? 
+        WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
 
@@ -251,7 +251,7 @@ class DAO
 
     public function AddNewProduct($productName, $productDescription, $productPrice, $productType, $productState)
     {
-        $query = "INSERT INTO Products (name, description, price, type, state) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO product (name, description, price, product_type, enabled) VALUES (?, ?, ?, ?, ?)";
 
         $stmt = $this->conn->prepare($query);
 
@@ -265,7 +265,7 @@ class DAO
 
     public function DeleteProduct($productId)
     {
-        $query = "DELETE FROM Products WHERE id_products = ?";
+        $query = "DELETE FROM product WHERE id = ?";
 
         $stmt = $this->conn->prepare($query);
 
@@ -281,14 +281,15 @@ class DAO
 
     #endregion
 
-    #region Orders
+    #region order
     public function GetOrdersByUserId($userID)
     {
-        $query = "SELECT * FROM Orders WHERE id = ?";
+        $query = "SELECT * FROM `Order` WHERE user_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $userID);
         $stmt->execute();
         $result = $stmt->get_result();
+
 
         $data = [];
         while ($row = $result->fetch_assoc()) {
@@ -302,7 +303,7 @@ class DAO
 
     public function GetProductsByOrderId($orderID)
     {
-        $query = "SELECT * FROM Orders_Products WHERE id_order = ?";
+        $query = "SELECT * FROM product_order WHERE order_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $orderID);
         $stmt->execute();
@@ -320,7 +321,6 @@ class DAO
 
     public function CreateNewOrder($userID, $discountCode, $productIdsArray)
     {
-        $query = "INSERT INTO Orders (`id`, `id_discount`, `date`, `final_price`) VALUES (?, ?, ?,?);";
         $date = date("Y-m-d");
 
         $this->DebugPrint("CreateNewOrder with value: $userID, $discountCode, $date");
@@ -330,7 +330,7 @@ class DAO
         $cartData = $this->GetProductsDataByIDs($productIdsArray);
         foreach ($productIdsArray as $productId) {
             for ($i = 0; $i < count($cartData); $i++) {
-                if ($productId == $cartData[$i]["id_products"]) {
+                if ($productId == $cartData[$i]["id"]) {
                     array_push($cartItems, $cartData[$i]);
                     continue;
                 }
@@ -351,18 +351,18 @@ class DAO
         $this->DebugPrint("Total Price with VAT: $totalPriceWithVAT");
 
         // Resta el descuento al precio total (con IVA ya aplicado)
-        $finalPrice = $totalPriceWithVAT;
+        $total_price = $totalPriceWithVAT;
 
         if ($discountCode != null) {
             $discountData = $this->GetDiscountDataByCode($discountCode);
             $discountValue = 0.0;
 
-            $this->DebugPrint("Discount type:" . $discountData["discount_type"]);
+            $this->DebugPrint("Discount product_type:" . $discountData["discount_type"]);
             $this->DebugPrint("Discount Value:" . $discountData["value"]);
 
             if ($discountData["discount_type"] == 0) {
                 // Descuento en porcentaje
-                $discountValue = $finalPrice * ($discountData["value"] * 0.01);
+                $discountValue = $total_price * ($discountData["value"] * 0.01);
                 $discountValue = number_format($discountValue, 2, '.', '');
             } elseif ($discountData["discount_type"] == 1) {
                 // Descuento fijo
@@ -371,16 +371,18 @@ class DAO
             }
 
             // Aplica el descuento al precio con IVA
-            $finalPrice -= $discountValue;
-            $this->DebugPrint("Final Price with discount: $finalPrice");
-
+            $total_price -= $discountValue;
+            $this->DebugPrint("Final Price with discount: $total_price");
+        } else {
+            $discountData["id"] = null;
         }
 
-        $finalPrice = number_format($finalPrice, 2, '.', '');
+        $total_price = number_format($total_price, 2, '.', '');
 
         // Ejecuta SQL para insertar el nuevo pedido
+        $query = "INSERT INTO `order` (`discount_id`, `user_id`, `total_price`, `date`) VALUES (?, ?, ?, ?);";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("iisd", $userID, $discountData["id_discount"], $date, $finalPrice);
+        $stmt->bind_param("iisd", $userID, $discountData["id"], $total_price, $date);
         $stmt->execute();
 
         // Recoje la id auto-generada
@@ -397,7 +399,7 @@ class DAO
 
     private function CreateOrderProduct($productID, $orderID)
     {
-        $query = "INSERT INTO Orders_Products (`id_order`, `id_product`, `amount`) VALUES (?, ?, 1);";
+        $query = "INSERT INTO product_order (`order_id`, `id_product`, `amount`) VALUES (?, ?, 1);";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("ii", $orderID, $productID);
@@ -451,7 +453,7 @@ class DAO
 
     public function GetDiscountDataById($discountID)
     {
-        $query = "SELECT * FROM Discount WHERE id_discount = ? LIMIT 1";
+        $query = "SELECT * FROM discount WHERE id = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $discountID);
         $stmt->execute();
@@ -488,7 +490,7 @@ class DAO
             SendResponse("Discount created successfully", 200); // OK
         } else {
             SendResponse("Failed to create discount", 500); // Internal server error
-        }   
+        }
         $stmt->close();
     }
 
@@ -517,7 +519,4 @@ class DAO
                 <th style='font-family: consolas; color: cyan; font-size: 12px'>$message</th>
             </table>";
     }
-
 }
-
-?>

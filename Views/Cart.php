@@ -20,7 +20,7 @@ try {
         $cartItems = [];
         foreach ($cart as $productId) {
             for ($i = 0; $i < count($cartData); $i++) {
-                if ($productId == $cartData[$i]["id_products"]) {
+                if ($productId == $cartData[$i]["id"]) {
                     array_push($cartItems, $cartData[$i]);
                     continue;
                 }

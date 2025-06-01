@@ -2,30 +2,21 @@
 
 class Product
 {
+    private int $discount_id;
     private string $name;
-    private float $value;
+    private string $product_type;
+    private float $price;
+    private bool $enabled;
 
-    public function __construct($name, $value)
+    public function __construct($discount_id, $name, $price, $product_type, $enabled)
     {
+        $this->$discount_id = $discount_id;
         $this->$name = $name;
-        $this->$value = $value;
+        $this->$price = $price;
+        $this->$product_type = $product_type;
+        $this->$enabled = $enabled;
     }
 
-    /**
-     * Get Product name
-     */
-    public function GetName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Get Product value
-     */
-    public function GetValue(): float
-    {
-        return $this->value;
-    }
 }
 
 ?>

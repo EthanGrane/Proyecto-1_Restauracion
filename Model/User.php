@@ -44,16 +44,43 @@ class User
         }
     }
 
-    public function GetName() {
+    public function GetName()
+    {
         return $this->name;
     }
 
-    public function GetMail() {
+    public function GetMail()
+    {
         return $this->mail;
     }
 
-    public function GetPassword() {
+    public function GetPassword()
+    {
         return $this->password;
     }
+
+    public static function CheckUserIsLogged()
+    {
+        return SessionManager::GetUserSession()["UserID"] != null;
+    }
+
+    public static function Authenticate($mail, $password, $dao)
+    {
+        error_log("Authenticate: iniciando con mail $mail");
+
+        if (!$dao->ValidateUser($mail, $password)) {
+            error_log("Authenticate: validación falló para $mail");
+            throw new Exception("Correo o contraseña inválidos.");
+        }
+
+        $data = $dao->GetUserDataByMailAndPassword($mail, $password);
+        error_log("Authenticate: datos obtenidos: " . print_r($data, true));
+
+        if (!$data) {
+            error_log("Authenticate: no se encontró usuario con mail $mail y contraseña dada");
+            throw new Exception("No se encontró el usuario.");
+        }
+
+        return new User($data["name"], $data["mail"], $data["password"]);
+    }
 }
-?>

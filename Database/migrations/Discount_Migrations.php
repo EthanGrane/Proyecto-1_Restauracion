@@ -1,5 +1,4 @@
 <?php
-
 $env = parse_ini_file('.env');
 
 $servername = $env['DB_HOST'];
@@ -14,21 +13,18 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-$query = "CREATE TABLE IF NOT EXISTS `Order` (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        discount_id INT NULL,
-        user_id INT NOT NULL,
-        date DATE NOT NULL,
-        total_price DECIMAL(10,2) NOT NULL
-    )";
+$query = "CREATE TABLE IF NOT EXISTS Discount (
+    id_discount INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    discount_code VARCHAR(45) NOT NULL,
+    discount_type INT NOT NULL,
+    value FLOAT NOT NULL
+);
+";
 
 if ($conn->query($query) === TRUE) {
-    echo "✅ Tabla 'Order' creada correctamente\n";
+    echo "✅ Tabla 'Discount' creada correctamente\n";
 } else {
-    echo "Error al crear la tabla: " . $conn->error;
+    echo "Error al crear la tabla: " . $conn->error . "\n";
 }
 
 $conn->close();
-
-
-?>

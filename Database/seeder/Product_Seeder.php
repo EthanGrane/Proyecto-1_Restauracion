@@ -70,7 +70,7 @@ for ($i = 0; $i < 50; $i++) {
 
     $query = "
     INSERT INTO product (price, name, product_type, enabled)
-    VALUES ($product_price, '$product_name', '$product_type', 0);
+    VALUES ($product_price, '$product_name', '$product_type', 1);
 ";
 
     $conn->query($query);

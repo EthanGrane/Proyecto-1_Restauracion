@@ -23,10 +23,10 @@ try {
 
         <?php
         if ($dao != null) {
-            $products = $dao->GetAllProductsByType("MainDish");
+            $products = $dao->GetAllProductsByType("Primary");
 
             foreach ($products as $product) {
-                ViewSystem::PrintProductCard($product["name"], $product["description"], $product["type"], $product["id_products"]);
+                ViewSystem::PrintProductCard($product["name"], $product["description"], $product["product_type"], $product["id"]);
             }
         }
         ?>
@@ -45,7 +45,7 @@ try {
             $products = $dao->GetAllProductsByType("Drink");
 
             foreach ($products as $product) {
-                ViewSystem::PrintProductCard($product["name"], $product["description"], $product["type"], $product["id_products"]);
+                ViewSystem::PrintProductCard($product["name"], $product["description"], $product["product_type"], $product["id"]);
             }
         }
         ?>
