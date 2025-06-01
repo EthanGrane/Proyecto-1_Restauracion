@@ -6,6 +6,10 @@ require_once("Framework/ViewSystem/ViewSystem.php");
 require_once("Controller/OrderController.php");
 require_once("Framework/DAO/DAO.php");
 
+require_once("Framework/DAO/ProductDAO.php");
+require_once("Framework/DAO/DiscountDAO.php");
+require_once("Framework/DAO/OrderDAO.php");
+
 class CartController
 {
     public function view()
@@ -43,7 +47,7 @@ class CartController
             $isValid = $dao->IsDiscountCodeValid($discountCode);
 
             if (!$isValid) {
-                SessionManager::SetException("Codigo de Descuento no es valido.");
+                SessionManager::SetException("Código de descuento no es válido.");
                 header("Location: /Cart");
                 exit;
             }
@@ -57,7 +61,7 @@ class CartController
 
         if ($discountCode != "") {
             if (count($cart) <= 3) {
-                SessionManager::SetException("Codigos de descuento aplicables con mas de 3 productos.");
+                SessionManager::SetException("Códigos de descuento aplicables con más de 3 productos.");
                 header("Location: /Cart");
             }
         }
@@ -68,7 +72,68 @@ class CartController
             exit;
         }
 
-        ViewSystem::PrintView("/Checkout");
+        $cartItems = [];
+        $discountValue = 0;
+        $totalPrice = 0.0;
+        $iva = 0.0;
+        $totalConIVA = 0.0;
+        $precioFinal = 0.0;
+        $discountData = null;
+
+        try {
+            $productDao = new ProductDAO();
+            $discountDao = new DiscountDAO();
+
+            $cartData = $productDao->GetProductsDataByIDs($cart);
+
+            if ($discountCode != "") {
+                $discountData = $discountDao->GetDiscountDataByCode($discountCode);
+            }
+
+            foreach ($cart as $productId) {
+                foreach ($cartData as $data) {
+                    if ($productId == $data["id"]) {
+                        $cartItems[] = $data;
+                        $totalPrice += $data["price"];
+                        break;
+                    }
+                }
+            }
+
+            // Cálculo de descuento
+            if (!empty($discountCode) && isset($discountData)) {
+                if ($discountData["discount_type"] == 0) {
+                    $discountValue = number_format($totalPrice * ($discountData["value"] / 100), 2, '.', '');
+                } elseif ($discountData["discount_type"] == 1) {
+                    $discountValue = number_format($discountData["value"], 2, '.', '');
+                }
+            }
+
+            $iva = number_format($totalPrice * 0.1, 2, '.', '');
+            $totalConIVA = number_format($totalPrice * 1.1, 2, '.', '');
+            $precioFinal = number_format($totalConIVA - $discountValue, 2, '.', '');
+        } catch (Exception $e) {
+            $cartItems = [];
+            $discountValue = 0;
+            $totalPrice = 0.0;
+            $iva = 0.0;
+            $totalConIVA = 0.0;
+            $precioFinal = 0.0;
+        } finally {
+            $productDao->CloseConnection();
+            $discountDao->CloseConnection();
+        }
+
+        ViewSystem::PrintView("/Checkout", null, data: [
+            "userSession" => $userSession,
+            "cartItems" => $cartItems,
+            "discountCode" => $discountCode,
+            "discountValue" => $discountValue,
+            "totalPrice" => $totalPrice,
+            "iva" => $iva,
+            "totalConIVA" => $totalConIVA,
+            "precioFinal" => $precioFinal
+        ]);
     }
 
     public function Finish()
