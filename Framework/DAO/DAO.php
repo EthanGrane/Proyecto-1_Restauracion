@@ -2,6 +2,10 @@
 
 class DAO
 {
+    // No lo borro por si acaso, nada de esto se utiliza
+    // Tener el codigo dividido por regiones me ha salvado para migrarlo todo a DAOs individuales
+
+    /*
     private $conn;
     public $debugMode = false;
 
@@ -411,12 +415,10 @@ class DAO
 
     #region Discounts
 
-    /*
-     * Solo se puede aplicar un descuento por pedido y solo se aplica al pedido entero no a productos individuales.
-     * En la descripcion de SQL del valor discount_type hay una explicacion de cada valor que significa
-     *      0 - Descuento de tipo porcentaje (-20% del precio original)
-     *      1 - Descuento de tipo fijo (-2€ del precio original)
-     */
+    //  * Solo se puede aplicar un descuento por pedido y solo se aplica al pedido entero no a productos individuales.
+    //  * En la descripcion de SQL del valor discount_type hay una explicacion de cada valor que significa
+    //  *      0 - Descuento de tipo porcentaje (-20% del precio original)
+    //  *      1 - Descuento de tipo fijo (-2€ del precio original)
     public function IsDiscountCodeValid($discountCode)
     {
         $query = "SELECT * FROM Discount WHERE discount_code = ?";
@@ -519,4 +521,5 @@ class DAO
                 <th style='font-family: consolas; color: cyan; font-size: 12px'>$message</th>
             </table>";
     }
+*/
 }

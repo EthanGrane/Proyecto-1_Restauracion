@@ -3,7 +3,7 @@ require_once("Model/User.php");
 require_once("Framework/CookieHandler/CookieHandler.php");
 require_once("Framework/SessionManager/SessionManager.php");
 include_once("Framework/ViewSystem/ViewSystem.php");
-include_once("Framework/DAO/DAO.php");
+include_once("Framework/DAO/UserDAO.php");
 include_once("Framework/DAO/OrderDAO.php");
 include_once("Framework/DAO/ProductDAO.php");
 include_once("Framework/DAO/DiscountDAO.php");
@@ -15,7 +15,6 @@ class UserController
     {
         self::CheckUserIsLogged();
 
-        $dao = new DAO();
         $orderDao = new OrderDAO();
         $discountDao = new DiscountDAO();
         $productDao = new ProductDAO();
@@ -62,7 +61,6 @@ class UserController
             }
         }
 
-        $dao->CloseConnection();
 
         ViewSystem::PrintView("User", "User", [
             "userOrders" => $userOrders,
@@ -83,16 +81,15 @@ class UserController
         $mail = $_POST["email"];
         $password = $_POST["password"];
 
-        $dao = null;
         try {
             error_log("Iniciando Login");
-            $dao = new DAO(true);
+            $userDao = new UserDAO(true);
             error_log("DAO creado");
 
-            $user = User::Authenticate($mail, $password, $dao);
+            $user = User::Authenticate($mail, $password, $userDao);
             error_log("Usuario autenticado: " . $user->GetMail());
 
-            $data = $dao->GetUserDataByMailAndPassword($mail, $password);
+            $data = $userDao->GetUserDataByMailAndPassword($mail, $password);
             error_log("Datos obtenidos: " . print_r($data, true));
 
             if ($data === null) {
@@ -113,8 +110,7 @@ class UserController
             error_log("Excepción: " . $e->getMessage());
             SessionManager::SetException($e->getMessage());
         } finally {
-            if ($dao != null)
-                $dao->CloseConnection();
+            $userDao->CloseConnection();
 
             error_log("Redirigiendo a login");
             header("Location: /login");
@@ -139,13 +135,13 @@ class UserController
             $password = $_POST["password"];
 
             $user = new User($name, $mail, $password);
-            $dao = new DAO();
+            $userDao = new UserDAO();
 
-            $user->ValidateUserData($dao->GetConnection());
+            $user->ValidateUserData($userDao->GetConnection());
 
-            $dao->AddUserToBBDD($user);
+            $userDao->AddUserToBBDD($user);
 
-            $data = $dao->GetUserDataByMailAndPassword($user->GetMail(), $user->GetPassword());
+            $data = $userDao->GetUserDataByMailAndPassword($user->GetMail(), $user->GetPassword());
             SessionManager::SetUserSession(
                 $data["id"],
                 $data["name"],
@@ -153,7 +149,7 @@ class UserController
                 $data["password"]
             );
 
-            $dao->CloseConnection();
+            $userDao->CloseConnection();
 
             header("Location: /user");
         } catch (Exception $e) {
