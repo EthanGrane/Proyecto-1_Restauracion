@@ -9,8 +9,9 @@
 
     <div class="container-fluid row justify-content-center" style="width: auto;">
         <?php foreach ($primaryProducts as $product): ?>
-            <?php ViewSystem::PrintProductCard($product["name"], $product["description"], $product["product_type"], $product["id"]); ?>
+            <?php ViewSystem::PrintProductCard($product); ?>
         <?php endforeach; ?>
+
     </div>
 
     <div class="SmallSpace"></div>
@@ -20,7 +21,7 @@
 
     <div class="container-fluid row justify-content-center" style="width: auto;">
         <?php foreach ($drinkProducts as $product): ?>
-            <?php ViewSystem::PrintProductCard($product["name"], $product["description"], $product["product_type"], $product["id"]); ?>
+            <?php ViewSystem::PrintProductCard($product); ?>
         <?php endforeach; ?>
     </div>
 </main>
@@ -33,7 +34,7 @@
                 <p class="mb-0 text-white"><?= count($cart) ?> Items seleccionados</p>
             </div>
             <a href="/Cart"
-               style="background-color: #28a745; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">
+                style="background-color: #28a745; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none;">
                 Finalizar compra.
             </a>
         </div>

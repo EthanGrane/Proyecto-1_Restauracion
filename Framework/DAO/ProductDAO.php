@@ -1,5 +1,7 @@
 <?php
 
+require_once("Model/Product.php");
+
 class ProductDAO
 {
     private $conn;
@@ -56,58 +58,57 @@ class ProductDAO
 
         $result = $stmt->get_result();
 
-        // Fecth data
-        $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
-        // $this->DebugPrint("[GetAllProductsByType]: " . print_r($data, true));
+        $products = [];
+        if ($result->num_rows > 0) {
+            while ($product = $result->fetch_object('Product')) {
+                $products[] = $product;
+            }
+        } else {
+            return null;
+        }
 
-        return $data;
+        return $products;
     }
+
 
     public function GetAllProducts()
     {
         $query = "SELECT * FROM product LIMIT 100";
 
         $stmt = $this->conn->prepare($query);
-
         $stmt->execute();
-
         $result = $stmt->get_result();
 
-        // Fecth data
-        $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
-        // $this->DebugPrint("[GetAllProducts]: " . print_r($data, true));
-
-        return $data;
-    }
-
-    public function GetProductsDataByIDs($ids)
-    {
-        if (empty($ids)) {
-            return [];
+        $products = [];
+        while ($product = $result->fetch_object('Product')) {
+            $products[] = $product;
         }
 
-        // $this->DebugPrint("[GetProductsByIDs]");
-        // $this->DebugPrint(" · [ids]: " . print_r($ids, true));
+        return $products;
+    }
 
+    public function GetProductsDataByIDs(array $ids)
+    {
+        if (empty($ids)) return [];
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-
-        // $this->DebugPrint(" · [placeholders]: " . print_r($placeholders, true));
-
-        $query = "SELECT * FROM product WHERE enabled = 0 AND id IN ($placeholders) LIMIT 100";
-        $stmt = $this->conn->prepare($query);
+        $sql = "SELECT * FROM product WHERE id IN ($placeholders)";
+        $stmt = $this->conn->prepare($sql);
 
         $types = str_repeat('i', count($ids));
         $stmt->bind_param($types, ...$ids);
 
         $stmt->execute();
         $result = $stmt->get_result();
-        $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
-        // $this->DebugPrint(" · [data]: " . print_r($data, true));
+        $products = [];
+        while ($product = $result->fetch_object('Product')) {
+            $products[] = $product;
+        }
 
-        return $data;
+        return $products;
     }
+
 
     public function UpdateProduct($productID, $productName, $productDescription, $productPrice, $productType, $productState)
     {

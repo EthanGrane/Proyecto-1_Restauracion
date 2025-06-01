@@ -4,22 +4,17 @@ require_once("Framework/CookieHandler/CookieHandler.php");
 require_once("Framework/SessionManager/SessionManager.php");
 require_once("Framework/ViewSystem/ViewSystem.php");
 require_once("Controller/OrderController.php");
-require_once("Framework/DAO/DAO.php");
 
 require_once("Framework/DAO/ProductDAO.php");
 require_once("Framework/DAO/DiscountDAO.php");
 require_once("Framework/DAO/OrderDAO.php");
 
+include_once("Model/Product.php");
+
 class CartController
 {
     public function view()
     {
-        include_once("Framework/DAO/DAO.php");
-        include_once("Framework/DAO/ProductDAO.php");
-        include_once("Framework/ViewSystem/ViewSystem.php");
-        include_once("Framework/CookieHandler/CookieHandler.php");
-        include_once("Framework/SessionManager/SessionManager.php");
-
         $exception = SessionManager::GetException();
         $cart = CookieHandler::GetCart();
 
@@ -29,38 +24,39 @@ class CartController
         $totalConIVA = 0.0;
 
         try {
-            if ($cart != null) {
-                $productDao = new ProductDAO();
-                $cartData = $productDao->GetProductsDataByIDs($cart);
-                $productDao->CloseConnection();
+            error_log("Cart contents: " . json_encode($cart));
 
-                foreach ($cart as $productId) {
-                    foreach ($cartData as $data) {
-                        if ($productId == $data["id"]) {
-                            $cartItems[] = $data;
-                            $totalPrice += $data["price"];
-                            break;
-                        }
-                    }
-                }
+            $productDao = new ProductDAO();
+            $cartData = $productDao->GetProductsDataByIDs($cart);
+            $productDao->CloseConnection();
 
-                $iva = number_format($totalPrice * 0.1, 2, '.', '');
-                $totalConIVA = number_format($totalPrice * 1.1, 2, '.', '');
+            error_log("Products fetched: " . json_encode($cartData));
+
+            foreach ($cartData as $product) {
+                error_log("Product fetched: " . print_r($product, true));
+                $cartItems[] = $product;
+                $totalPrice += $product->price;
             }
+
+            $iva = number_format($totalPrice * 0.1, 2, '.', '');
+            $totalConIVA = number_format($totalPrice * 1.1, 2, '.', '');
         } catch (Exception $e) {
+            error_log("Error in cart view: " . $e->getMessage());
             $cartItems = [];
         }
 
-        $data = [
+        error_log("Final cart items: " . json_encode($cartItems));
+        error_log("Subtotal: $totalPrice, IVA: $iva, Total con IVA: $totalConIVA");
+
+        ViewSystem::PrintView("Cart", null, [
             "cartItems" => $cartItems,
             "totalPrice" => $totalPrice,
             "iva" => $iva,
             "totalConIVA" => $totalConIVA,
             "exception" => $exception
-        ];
-
-        ViewSystem::PrintView("Cart", null, $data);
+        ]);
     }
+
 
 
     public function Add()

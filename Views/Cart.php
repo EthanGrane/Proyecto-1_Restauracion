@@ -33,7 +33,7 @@
                 </div>
                 <?php foreach ($cartItems as $item): ?>
                     <div class='d-flex justify-content-end'>
-                        <p><?= $item['price'] ?> €</p>
+                        <p><?= $item->price ?> €</p>
                     </div>
                 <?php endforeach; ?>
 

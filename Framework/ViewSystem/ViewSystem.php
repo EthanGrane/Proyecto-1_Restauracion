@@ -32,20 +32,21 @@ class ViewSystem
         require_once(self::ADMIN_TEMPLATE_PATH);
     }
 
-    public static function PrintProductCard($name, $description, $type, $id)
+    public static function PrintProductCard(Product $product)
     {
-        $url = $type . "_" . $name . ".png";
+        $url = $product->product_type . "_" . $product->name . ".png";
         $url = self::RESOURCES_PATH . $url;
 
         require("Views/Layout/Templates/Template_ProductCard.php");
     }
 
-    public static function PrintCartItem($data)
+
+    public static function PrintCartItem(Product $product)
     {
-        $name = $data["name"];
-        $price = $data["price"];
-        $type = $data["product_type"];
-        $id = $data["id"];
+        $name = $product->name;
+        $price = $product->price;
+        $type = $product->product_type;
+        $id = $product->id;
 
         require("Views/Layout/Templates/Template_CartItem.php");
     }
