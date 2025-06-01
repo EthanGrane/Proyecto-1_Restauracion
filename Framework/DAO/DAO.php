@@ -282,130 +282,130 @@ class DAO
     #endregion
 
     #region order
-    public function GetOrdersByUserId($userID)
-    {
-        $query = "SELECT * FROM `Order` WHERE user_id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("i", $userID);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    // public function GetOrdersByUserId($userID)
+    // {
+    //     $query = "SELECT * FROM `Order` WHERE user_id = ?";
+    //     $stmt = $this->conn->prepare($query);
+    //     $stmt->bind_param("i", $userID);
+    //     $stmt->execute();
+    //     $result = $stmt->get_result();
 
 
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
-        }
+    //     $data = [];
+    //     while ($row = $result->fetch_assoc()) {
+    //         $data[] = $row;
+    //     }
 
-        $stmt->close();
+    //     $stmt->close();
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
-    public function GetProductsByOrderId($orderID)
-    {
-        $query = "SELECT * FROM product_order WHERE order_id = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("i", $orderID);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    // public function GetProductsByOrderId($orderID)
+    // {
+    //     $query = "SELECT * FROM product_order WHERE order_id = ?";
+    //     $stmt = $this->conn->prepare($query);
+    //     $stmt->bind_param("i", $orderID);
+    //     $stmt->execute();
+    //     $result = $stmt->get_result();
 
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
-        }
+    //     $data = [];
+    //     while ($row = $result->fetch_assoc()) {
+    //         $data[] = $row;
+    //     }
 
-        $stmt->close();
+    //     $stmt->close();
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
-    public function CreateNewOrder($userID, $discountCode, $productIdsArray)
-    {
-        $date = date("Y-m-d");
+    // public function CreateNewOrder($userID, $discountCode, $productIdsArray)
+    // {
+    //     $date = date("Y-m-d");
 
-        $this->DebugPrint("CreateNewOrder with value: $userID, $discountCode, $date");
+    //     $this->DebugPrint("CreateNewOrder with value: $userID, $discountCode, $date");
 
-        // Recoje toda la informacion sobre los productos. (mismo codigo que en Cart.php seccion try{})
-        $cartItems = [];
-        $cartData = $this->GetProductsDataByIDs($productIdsArray);
-        foreach ($productIdsArray as $productId) {
-            for ($i = 0; $i < count($cartData); $i++) {
-                if ($productId == $cartData[$i]["id"]) {
-                    array_push($cartItems, $cartData[$i]);
-                    continue;
-                }
-            }
-        }
+    //     // Recoje toda la informacion sobre los productos. (mismo codigo que en Cart.php seccion try{})
+    //     $cartItems = [];
+    //     $cartData = $this->GetProductsDataByIDs($productIdsArray);
+    //     foreach ($productIdsArray as $productId) {
+    //         for ($i = 0; $i < count($cartData); $i++) {
+    //             if ($productId == $cartData[$i]["id"]) {
+    //                 array_push($cartItems, $cartData[$i]);
+    //                 continue;
+    //             }
+    //         }
+    //     }
 
-        // Calcula el precio total antes del IVA
-        $totalPrice = 0.0;
-        for ($i = 0; $i < count($cartItems); $i++) {
-            $sum = $cartItems[$i]["price"];
-            $totalPrice += $sum;
-            $this->DebugPrint("Total Price += $sum");
-        }
-        $this->DebugPrint("Total Price before VAT: $totalPrice");
+    //     // Calcula el precio total antes del IVA
+    //     $totalPrice = 0.0;
+    //     for ($i = 0; $i < count($cartItems); $i++) {
+    //         $sum = $cartItems[$i]["price"];
+    //         $totalPrice += $sum;
+    //         $this->DebugPrint("Total Price += $sum");
+    //     }
+    //     $this->DebugPrint("Total Price before VAT: $totalPrice");
 
-        // IVA: Agregar el 10% de IVA al total
-        $totalPriceWithVAT = $totalPrice * 1.1; // IVA del 10%
-        $this->DebugPrint("Total Price with VAT: $totalPriceWithVAT");
+    //     // IVA: Agregar el 10% de IVA al total
+    //     $totalPriceWithVAT = $totalPrice * 1.1; // IVA del 10%
+    //     $this->DebugPrint("Total Price with VAT: $totalPriceWithVAT");
 
-        // Resta el descuento al precio total (con IVA ya aplicado)
-        $total_price = $totalPriceWithVAT;
+    //     // Resta el descuento al precio total (con IVA ya aplicado)
+    //     $total_price = $totalPriceWithVAT;
 
-        if ($discountCode != null) {
-            $discountData = $this->GetDiscountDataByCode($discountCode);
-            $discountValue = 0.0;
+    //     if ($discountCode != null) {
+    //         $discountData = $this->GetDiscountDataByCode($discountCode);
+    //         $discountValue = 0.0;
 
-            $this->DebugPrint("Discount product_type:" . $discountData["discount_type"]);
-            $this->DebugPrint("Discount Value:" . $discountData["value"]);
+    //         $this->DebugPrint("Discount product_type:" . $discountData["discount_type"]);
+    //         $this->DebugPrint("Discount Value:" . $discountData["value"]);
 
-            if ($discountData["discount_type"] == 0) {
-                // Descuento en porcentaje
-                $discountValue = $total_price * ($discountData["value"] * 0.01);
-                $discountValue = number_format($discountValue, 2, '.', '');
-            } elseif ($discountData["discount_type"] == 1) {
-                // Descuento fijo
-                $discountValue = $discountData["value"];
-                $discountValue = number_format($discountValue, 2, '.', '');
-            }
+    //         if ($discountData["discount_type"] == 0) {
+    //             // Descuento en porcentaje
+    //             $discountValue = $total_price * ($discountData["value"] * 0.01);
+    //             $discountValue = number_format($discountValue, 2, '.', '');
+    //         } elseif ($discountData["discount_type"] == 1) {
+    //             // Descuento fijo
+    //             $discountValue = $discountData["value"];
+    //             $discountValue = number_format($discountValue, 2, '.', '');
+    //         }
 
-            // Aplica el descuento al precio con IVA
-            $total_price -= $discountValue;
-            $this->DebugPrint("Final Price with discount: $total_price");
-        } else {
-            $discountData["id"] = null;
-        }
+    //         // Aplica el descuento al precio con IVA
+    //         $total_price -= $discountValue;
+    //         $this->DebugPrint("Final Price with discount: $total_price");
+    //     } else {
+    //         $discountData["id"] = null;
+    //     }
 
-        $total_price = number_format($total_price, 2, '.', '');
+    //     $total_price = number_format($total_price, 2, '.', '');
 
-        // Ejecuta SQL para insertar el nuevo pedido
-        $query = "INSERT INTO `order` (`discount_id`, `user_id`, `total_price`, `date`) VALUES (?, ?, ?, ?);";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("iisd", $userID, $discountData["id"], $total_price, $date);
-        $stmt->execute();
+    //     // Ejecuta SQL para insertar el nuevo pedido
+    //     $query = "INSERT INTO `order` (`discount_id`, `user_id`, `total_price`, `date`) VALUES (?, ?, ?, ?);";
+    //     $stmt = $this->conn->prepare($query);
+    //     $stmt->bind_param("iisd", $userID, $discountData["id"], $total_price, $date);
+    //     $stmt->execute();
 
-        // Recoje la id auto-generada
-        $orderID = $this->conn->insert_id;
+    //     // Recoje la id auto-generada
+    //     $orderID = $this->conn->insert_id;
 
-        $stmt->close();
+    //     $stmt->close();
 
-        // Inserta los productos en la orden
-        for ($i = 0; $i < count($productIdsArray); $i++) {
-            $this->CreateOrderProduct($productIdsArray[$i], $orderID);
-        }
-    }
+    //     // Inserta los productos en la orden
+    //     for ($i = 0; $i < count($productIdsArray); $i++) {
+    //         $this->CreateOrderProduct($productIdsArray[$i], $orderID);
+    //     }
+    // }
 
 
-    private function CreateOrderProduct($productID, $orderID)
-    {
-        $query = "INSERT INTO product_order (`order_id`, `id_product`, `amount`) VALUES (?, ?, 1);";
+    // private function CreateOrderProduct($productID, $orderID)
+    // {
+    //     $query = "INSERT INTO product_order (`order_id`, `id_product`, `amount`) VALUES (?, ?, 1);";
 
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("ii", $orderID, $productID);
-        $stmt->execute();
-        $stmt->close();
-    }
+    //     $stmt = $this->conn->prepare($query);
+    //     $stmt->bind_param("ii", $orderID, $productID);
+    //     $stmt->execute();
+    //     $stmt->close();
+    // }
 
     #endregion
 

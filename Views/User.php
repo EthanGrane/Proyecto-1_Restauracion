@@ -1,10 +1,6 @@
-<?php
-require_once("Framework/SessionManager/SessionManager.php");
-$dao = new DAO();
-
-$userSession = SessionManager::GetUserSession();
-$orders = $dao->GetOrdersByUserId($userSession["UserID"]);
-?>
+<!-- 
+ Esta view es llamada por UserController/View 
+ -->
 
 <div class="container d-flex w-100 justify-content-end">
     <a href="/user/logout" class="btn btn-secondary m-3">Logout</a>
@@ -22,12 +18,10 @@ $orders = $dao->GetOrdersByUserId($userSession["UserID"]);
         <img src="Views/Resources/logo.png" alt="Imagen de perfil" class="rounded-circle"
             style="width: 150px; height: 150px;">
 
-        <h3 class="mt-3 mb-1 text-white"> <?= $userSession["UserName"] ?> </h3>
-        <p class="text-white"> <?= $userSession["UserMail"] ?> </p>
-
+        <h3 class="mt-3 mb-1 text-white"> <?= htmlspecialchars($userSession["UserName"]) ?> </h3>
+        <p class="text-white"> <?= htmlspecialchars($userSession["UserMail"]) ?> </p>
     </div>
 </div>
-
 
 <main>
     <!-- Historial de compras -->
@@ -35,92 +29,45 @@ $orders = $dao->GetOrdersByUserId($userSession["UserID"]);
         <h2>Historial de compras</h2>
         <div class="row">
 
-            <?php
-            if (count($orders) == 0) {
-            ?>
+            <?php if (count($userOrders) == 0): ?>
                 <div class="col-12 mb-3">
                     <div class="border rounded p-3 d-flex justify-content-center">
-                        <p>No hay ningun registro de un pedido.</p>
+                        <p>No hay ningún registro de un pedido.</p>
                     </div>
                 </div>
-            <?php
-            }
+            <?php endif; ?>
 
-            for ($i = 0; $i < count($orders); $i++) {
-                $ordersProducts = $dao->GetProductsByOrderId($orders[$i]["id"]);
-            ?>
-
+            <?php for ($i = 0; $i < count($userOrders); $i++): ?>
                 <div class="col-12 mb-3">
                     <div class="border rounded p-3">
                         <div class="d-flex justify-content-between">
                             <p class="mb-0"><strong>Fecha:</strong>
-                                <?= $orders[$i]["date"] ?>
+                                <?= htmlspecialchars($userOrders[$i]["date"]) ?>
                             </p>
                             <p class="mb-1"><strong>Número de productos:</strong>
-                                <?= count($ordersProducts); ?>
+                                <?= count($userOrders[$i]["products"]); ?>
                             </p>
                             <p class="mb-1"><strong>Precio total:</strong>
-                                <?= $orders[$i]["total_price"]; ?> €
+                                <?= htmlspecialchars($userOrders[$i]["total_price"]); ?> €
                             </p>
                         </div>
                         <ul>
-                            <?php
-                            /*
-                             * Muestra los productos del pedido y los precios
-                             */
-                            // Almacena los IDS para pasarlos por la funcion de GetProductDataByIds que devuelve la informacion de los productos desde la BBDD
-                            $productsID = array_column($ordersProducts, 'product_id');
-                            $productData = $dao->GetProductsDataByIDs($productsID);
+                            <?php foreach ($userOrders[$i]["products"] as $product): ?>
+                                <li>
+                                    <?= htmlspecialchars($product['name']) ?> - <?= htmlspecialchars($product['price']) ?> €
+                                </li>
+                            <?php endforeach; ?>
 
-                            for ($j = 0; $j < count($productData); $j++) {
-                                echo "
-                                <div class='d-flex justify-content-center'>
-                                    <div class='w-50 p-1'>
-                                        <div class='d-flex justify-content-between'>
-                                            <p>" . $productData[$j]['name'] . "</p>
-                                            <p>" . $productData[$j]['price'] . " €</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                ";
-                            }
-
-                            if ($orders[$i]["discount_id"] != null) {
-                                $currentOrderDiscountData = $dao->GetDiscountDataById($orders[$i]["discount_id"]);
-
-                                if ($currentOrderDiscountData["discount_type"] == 0) {
-                                    $currentOrderDiscountValue = $orders[$i]["total_price"] * ($currentOrderDiscountData["value"] * 0.01);
-                                } else if ($currentOrderDiscountData["discount_type"] == 1) {
-                                    $currentOrderDiscountValue = $currentOrderDiscountData["value"];
-                                }
-
-                                $currentOrderDiscountValue = number_format($currentOrderDiscountValue, 2, '.', '');
-
-
-                                echo "
-                                <div class='d-flex justify-content-center'>
-                                    <div class='w-50 p-1'>
-                                        <div class='d-flex justify-content-between'>
-                                            <p>Descuento</p>
-                                            <p>- $currentOrderDiscountValue €</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                ";
-                            }
-
-                            ?>
+                            <?php if (!empty($userOrders[$i]["discount_value"]) && $userOrders[$i]["discount_value"] > 0): ?>
+                                <li>
+                                    <strong>Descuento:</strong> -<?= htmlspecialchars($userOrders[$i]["discount_value"]) ?> €
+                                </li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                 </div>
+            <?php endfor; ?>
 
-            <?php
-            }
-            ?>
         </div>
     </div>
 </main>
-
-<?php
-$dao->CloseConnection();
-?>

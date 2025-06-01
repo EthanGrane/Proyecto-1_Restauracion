@@ -4,6 +4,10 @@ require_once("Framework/CookieHandler/CookieHandler.php");
 require_once("Framework/SessionManager/SessionManager.php");
 include_once("Framework/ViewSystem/ViewSystem.php");
 include_once("Framework/DAO/DAO.php");
+include_once("Framework/DAO/OrderDAO.php");
+include_once("Framework/DAO/ProductDAO.php");
+include_once("Framework/DAO/DiscountDAO.php");
+include_once("Framework/DAO/ProductOrderDAO.php");
 
 class UserController
 {
@@ -11,7 +15,59 @@ class UserController
     {
         self::CheckUserIsLogged();
 
-        ViewSystem::PrintView("User");
+        $dao = new DAO();
+        $orderDao = new OrderDAO();
+        $discountDao = new DiscountDAO();
+        $productDao = new ProductDAO();
+        $productOrderDao = new ProductOrderDAO();
+
+        $userSession = SessionManager::GetUserSession();
+
+        $userOrders = [];
+
+        if ($userSession !== null && isset($userSession["UserID"])) {
+            $orders = $orderDao->GetOrdersByUserId($userSession["UserID"]);
+
+            if (!is_array($orders)) {
+                $orders = [];
+            }
+
+            foreach ($orders as $order) {
+                $orderId = $order["id"];
+                $ordersProducts = $productOrderDao->GetProductsOrderByOrderId($orderId);
+                $productsID = is_array($ordersProducts) ? array_column($ordersProducts, 'product_id') : [];
+                $productData = !empty($productsID) ? $productDao->GetProductsDataByIDs($productsID) : [];
+
+                $discount = null;
+                $discountValue = 0;
+
+                if (!empty($order["discount_id"])) {
+                    $discount = $discountDao->GetDiscountDataById($order["discount_id"]);
+
+                    if (is_array($discount)) {
+                        if ($discount["discount_type"] == 0) {
+                            $discountValue = number_format($order["total_price"] * ($discount["value"] * 0.01), 2, '.', '');
+                        } elseif ($discount["discount_type"] == 1) {
+                            $discountValue = number_format($discount["value"], 2, '.', '');
+                        }
+                    }
+                }
+
+                $userOrders[] = [
+                    "date" => $order["date"],
+                    "total_price" => $order["total_price"],
+                    "products" => $productData,
+                    "discount_value" => $discountValue
+                ];
+            }
+        }
+
+        $dao->CloseConnection();
+
+        ViewSystem::PrintView("User", "User", [
+            "userOrders" => $userOrders,
+            "userSession" => $userSession
+        ]);
     }
 
     public function ViewLogin()

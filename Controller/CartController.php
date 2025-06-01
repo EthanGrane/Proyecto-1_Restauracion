@@ -2,8 +2,9 @@
 
 require_once("Framework/CookieHandler/CookieHandler.php");
 require_once("Framework/SessionManager/SessionManager.php");
-require_once("Framework/DAO/DAO.php");
 require_once("Framework/ViewSystem/ViewSystem.php");
+require_once("Controller/OrderController.php");
+require_once("Framework/DAO/DAO.php");
 
 class CartController
 {
@@ -33,42 +34,36 @@ class CartController
         CookieHandler::ClearCart();
         header("Location: /Cart");
     }
-    
+
     public function Checkout()
     {
         $discountCode = $_POST["discountCode"];
-        if($discountCode != "")
-        {
+        if ($discountCode != "") {
             $dao = new DAO();
             $isValid = $dao->IsDiscountCodeValid($discountCode);
 
-            if(!$isValid)
-            {
+            if (!$isValid) {
                 SessionManager::SetException("Codigo de Descuento no es valido.");
                 header("Location: /Cart");
                 exit;
             }
         }
 
-        $cart = json_decode($_POST["cartItems"],true);
-        if(count($cart) == 0)
-        {
+        $cart = json_decode($_POST["cartItems"], true);
+        if (count($cart) == 0) {
             header("Location: /Cart");
             exit;
         }
 
-        if($discountCode != "")
-        {
-            if(count($cart) <= 3)
-            {
+        if ($discountCode != "") {
+            if (count($cart) <= 3) {
                 SessionManager::SetException("Codigos de descuento aplicables con mas de 3 productos.");
                 header("Location: /Cart");
             }
         }
 
         $userSession = SessionManager::GetUserSession();
-        if($userSession["UserID"] == null)
-        {
+        if ($userSession["UserID"] == null) {
             header("Location: /Login");
             exit;
         }
@@ -78,17 +73,14 @@ class CartController
 
     public function Finish()
     {
-        $cart = json_decode($_POST["cartItems"],true);
+        $cart = json_decode($_POST["cartItems"], true);
         $userSession = SessionManager::GetUserSession();
-        
-        $dao = new DAO(true);
+        var_dump($userSession);
 
-        $dao->CreateNewOrder($userSession["UserID"],$_POST["discountCode"], $cart);
-        $dao->CloseConnection();
+        $orderController = new OrderController();
+        $orderController->CreateNewOrder($userSession["UserID"], $_POST["discountCode"], $cart);
 
         CookieHandler::ClearCart();
         header("Location: /User");
     }
-}   
-
-?>
+}
