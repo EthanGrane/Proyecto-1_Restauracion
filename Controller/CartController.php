@@ -14,8 +14,54 @@ class CartController
 {
     public function view()
     {
-        ViewSystem::PrintView("/Cart");
+        include_once("Framework/DAO/DAO.php");
+        include_once("Framework/DAO/ProductDAO.php");
+        include_once("Framework/ViewSystem/ViewSystem.php");
+        include_once("Framework/CookieHandler/CookieHandler.php");
+        include_once("Framework/SessionManager/SessionManager.php");
+
+        $exception = SessionManager::GetException();
+        $cart = CookieHandler::GetCart();
+
+        $cartItems = [];
+        $totalPrice = 0.0;
+        $iva = 0.0;
+        $totalConIVA = 0.0;
+
+        try {
+            if ($cart != null) {
+                $productDao = new ProductDAO();
+                $cartData = $productDao->GetProductsDataByIDs($cart);
+                $productDao->CloseConnection();
+
+                foreach ($cart as $productId) {
+                    foreach ($cartData as $data) {
+                        if ($productId == $data["id"]) {
+                            $cartItems[] = $data;
+                            $totalPrice += $data["price"];
+                            break;
+                        }
+                    }
+                }
+
+                $iva = number_format($totalPrice * 0.1, 2, '.', '');
+                $totalConIVA = number_format($totalPrice * 1.1, 2, '.', '');
+            }
+        } catch (Exception $e) {
+            $cartItems = [];
+        }
+
+        $data = [
+            "cartItems" => $cartItems,
+            "totalPrice" => $totalPrice,
+            "iva" => $iva,
+            "totalConIVA" => $totalConIVA,
+            "exception" => $exception
+        ];
+
+        ViewSystem::PrintView("Cart", null, $data);
     }
+
 
     public function Add()
     {
@@ -124,7 +170,7 @@ class CartController
             $discountDao->CloseConnection();
         }
 
-        ViewSystem::PrintView("/Checkout", null, data: [
+        ViewSystem::PrintView("Checkout", null, data: [
             "userSession" => $userSession,
             "cartItems" => $cartItems,
             "discountCode" => $discountCode,
