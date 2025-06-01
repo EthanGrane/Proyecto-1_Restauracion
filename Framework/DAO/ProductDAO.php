@@ -58,7 +58,7 @@ class ProductDAO
 
         // Fecth data
         $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
-        $this->DebugPrint("[GetAllProductsByType]: " . print_r($data, true));
+        // $this->DebugPrint("[GetAllProductsByType]: " . print_r($data, true));
 
         return $data;
     }
@@ -75,7 +75,7 @@ class ProductDAO
 
         // Fecth data
         $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
-        $this->DebugPrint("[GetAllProducts]: " . print_r($data, true));
+        // $this->DebugPrint("[GetAllProducts]: " . print_r($data, true));
 
         return $data;
     }
