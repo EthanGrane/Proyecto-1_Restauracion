@@ -52,7 +52,7 @@ class DiscountDAO
      */
     public function IsDiscountCodeValid($discountCode)
     {
-        $query = "SELECT * FROM Discount WHERE discount_code = ?";
+        $query = "SELECT * FROM discount WHERE discount_code = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("s", $discountCode);
         $stmt->execute();
@@ -71,7 +71,7 @@ class DiscountDAO
     public function GetDiscountDataByCode($discountCode)
     {
         if ($this->IsDiscountCodeValid($discountCode)) {
-            $query = "SELECT * FROM Discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
+            $query = "SELECT * FROM discount WHERE discount_code = ? AND valid = 1 LIMIT 1";
             $stmt = $this->conn->prepare($query);
             $stmt->bind_param("s", $discountCode);
             $stmt->execute();
@@ -98,7 +98,7 @@ class DiscountDAO
 
     public function GetAllDiscounts()
     {
-        $query = "SELECT * FROM Discount LIMIT 100";
+        $query = "SELECT * FROM discount LIMIT 100";
 
         $stmt = $this->conn->prepare($query);
 
@@ -129,7 +129,7 @@ class DiscountDAO
 
     public function DeleteDiscount($discountId)
     {
-        $query = "DELETE FROM Discount WHERE id_discount = ?";
+        $query = "DELETE FROM discount WHERE id_discount = ?";
 
         $stmt = $this->conn->prepare($query);
 

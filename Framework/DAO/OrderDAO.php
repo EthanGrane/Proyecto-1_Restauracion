@@ -45,7 +45,7 @@ class OrderDAO
     #region order
     public function GetOrdersByUserId($userID)
     {
-        $query = "SELECT * FROM `Order` WHERE user_id = ?";
+        $query = "SELECT * FROM `order` WHERE user_id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $userID);
         $stmt->execute();

@@ -14,7 +14,7 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-$query = "CREATE TABLE IF NOT EXISTS `Order` (
+$query = "CREATE TABLE IF NOT EXISTS `order` (
         id INT AUTO_INCREMENT PRIMARY KEY,
         discount_id INT NULL,
         user_id INT NOT NULL,
@@ -23,7 +23,7 @@ $query = "CREATE TABLE IF NOT EXISTS `Order` (
     )";
 
 if ($conn->query($query) === TRUE) {
-    echo "✅ Tabla 'Order' creada correctamente\n";
+    echo "✅ Tabla 'order' creada correctamente\n";
 } else {
     echo "Error al crear la tabla: " . $conn->error;
 }
