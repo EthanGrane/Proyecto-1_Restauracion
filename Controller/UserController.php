@@ -33,8 +33,8 @@ class UserController
 
             foreach ($orders as $order) {
                 $orderId = $order->id;
-                $ordersProducts = $productOrderDao->GetProductsOrderByOrderId($orderId);
-                $productsID = is_array($ordersProducts) ? array_column($ordersProducts, 'product_id') : [];
+                $product_orders = $productOrderDao->GetProductsOrderByOrderId($orderId);
+                $productsID = is_array($product_orders) ? array_column($product_orders, 'product_id') : [];
                 $productData = !empty($productsID) ? $productDao->GetProductsDataByIDs($productsID) : [];
 
                 $discount = null;
