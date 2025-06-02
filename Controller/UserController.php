@@ -32,7 +32,7 @@ class UserController
             }
 
             foreach ($orders as $order) {
-                $orderId = $order["id"];
+                $orderId = $order->id;
                 $ordersProducts = $productOrderDao->GetProductsOrderByOrderId($orderId);
                 $productsID = is_array($ordersProducts) ? array_column($ordersProducts, 'product_id') : [];
                 $productData = !empty($productsID) ? $productDao->GetProductsDataByIDs($productsID) : [];
@@ -40,12 +40,12 @@ class UserController
                 $discount = null;
                 $discountValue = 0;
 
-                if (!empty($order["discount_id"])) {
-                    $discount = $discountDao->GetDiscountDataById($order["discount_id"]);
+                if (!empty($order->discount_id)) {
+                    $discount = $discountDao->GetDiscountDataById($order->discount_id);
 
                     if (is_array($discount)) {
                         if ($discount["discount_type"] == 0) {
-                            $discountValue = number_format($order["total_price"] * ($discount["value"] * 0.01), 2, '.', '');
+                            $discountValue = number_format($order->total_price * ($discount["value"] * 0.01), 2, '.', '');
                         } elseif ($discount["discount_type"] == 1) {
                             $discountValue = number_format($discount["value"], 2, '.', '');
                         }
@@ -53,8 +53,8 @@ class UserController
                 }
 
                 $userOrders[] = [
-                    "date" => $order["date"],
-                    "total_price" => $order["total_price"],
+                    "date" => $order->date,
+                    "total_price" => $order->total_price,
                     "products" => $productData,
                     "discount_value" => $discountValue
                 ];
@@ -83,24 +83,25 @@ class UserController
 
         try {
             error_log("Iniciando Login");
-            $userDao = new UserDAO(true);
+            $userDao = new UserDAO();
             error_log("DAO creado");
 
-            $user = User::Authenticate($mail, $password, $userDao);
-            error_log("Usuario autenticado: " . $user->GetMail());
+            if (!User::Authenticate($mail, $password, $userDao)) {
+                throw new Exception("Usuario Incorrecto");
+            }
 
-            $data = $userDao->GetUserDataByMailAndPassword($mail, $password);
-            error_log("Datos obtenidos: " . print_r($data, true));
+            $userData = $userDao->GetUserDataByMailAndPassword($mail, $password);
+            error_log("Datos obtenidos: " . print_r($userData, true));
 
-            if ($data === null) {
+            if ($userData === null) {
                 throw new Exception("No se encontró el usuario en la base de datos.");
             }
 
             SessionManager::SetUserSession(
-                $data["id"],
-                $user->GetName(),
-                $user->GetMail(),
-                $user->GetPassword()
+                $userData->id,
+                $userData->name,
+                $userData->mail,
+                $userData->password
             );
 
             error_log("Sesión creada correctamente");
@@ -134,23 +135,28 @@ class UserController
             $mail = $_POST["mail"];
             $password = $_POST["password"];
 
-            $user = new User($name, $mail, $password);
+            $user = new User();
+            $user->name = $name;
+            $user->mail = $mail;
+            $user->password = $password;
+
             $userDao = new UserDAO();
 
             $user->ValidateUserData($userDao->GetConnection());
 
             $userDao->AddUserToBBDD($user);
 
-            $data = $userDao->GetUserDataByMailAndPassword($user->GetMail(), $user->GetPassword());
+            $user = $userDao->GetUserDataByMailAndPassword($user->GetMail(), $user->GetPassword());
             SessionManager::SetUserSession(
-                $data["id"],
-                $data["name"],
-                $data["mail"],
-                $data["password"]
+                $user->id,
+                $user->name,
+                $user->mail,
+                $user->password
             );
 
             $userDao->CloseConnection();
 
+            error_log("SignIn Completed");
             header("Location: /user");
         } catch (Exception $e) {
             SessionManager::SetException($e->getMessage());

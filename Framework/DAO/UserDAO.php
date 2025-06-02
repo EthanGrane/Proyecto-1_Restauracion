@@ -1,5 +1,7 @@
 <?php
 
+require_once("Model/User.php");
+
 class UserDAO
 {
     private $conn;
@@ -18,7 +20,7 @@ class UserDAO
         $database = $env['DB_NAME'];
         $port = $env['DB_PORT'];
 
-        $this->conn = new mysqli($servername, $username, $password, $database, $port);
+        $this->conn = new mysqli( $servername, $username, $password, $database, $port);
     }
 
     public function CloseConnection()
@@ -49,11 +51,11 @@ class UserDAO
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $data = $result->fetch_assoc();
+            $user = $result->fetch_object('User');
 
             // Verificar la contraseña utilizando password_verify
-            if (password_verify($hashPasswordParam, $data['password'])) {
-                return $data;
+            if (password_verify($hashPasswordParam, $user->password)) {
+                return $user;
             } else {
                 return null; // Contraseña incorrecta
             }
@@ -73,10 +75,10 @@ class UserDAO
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $data = $result->fetch_assoc();
+            $user = $result->fetch_object('User');
 
             // Verificar la contraseña utilizando password_verify
-            if (password_verify($hashPasswordParam, $data['password'])) {
+            if (password_verify($hashPasswordParam, $user->password)) {
                 return true;
             } else {
                 throw new Exception("Email or Password incorrect.");
@@ -95,11 +97,11 @@ class UserDAO
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $data = [];
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;
+            $user = [];
+            while ($row = $result->fetch_object('User')) {
+                $user[] = $row;
             }
-            return $data;
+            return $user;
         } else {
             return [];
         }
@@ -150,10 +152,10 @@ class UserDAO
     public function AddUserToBBDD($user)
     {
         // Encriptar la contraseña con password_hash
-        $hashPass = password_hash($user->GetPassword(), PASSWORD_DEFAULT);
+        $hashPass = password_hash($user->password, PASSWORD_DEFAULT);
 
         $stmt = $this->conn->prepare("INSERT INTO user (name, mail, password, role) VALUES (?, ?, ?, '0')");
-        $stmt->bind_param("sss", $user->GetName(), $user->GetMail(), $hashPass);
+        $stmt->bind_param("sss", $user->name, $user->mail, $hashPass);
         $stmt->execute();
     }
 

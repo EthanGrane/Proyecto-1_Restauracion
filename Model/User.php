@@ -2,16 +2,19 @@
 
 class User
 {
-    private string $name;
-    private string $mail;
-    private string $password;
+    public int $id;
+    public string $name;
+    public string $mail;
+    public ?string $direction;
+    public string $password;
+    public ?int $role;
 
-    public function __construct($name, $mail, $password)
-    {
-        $this->name = $name;
-        $this->mail = $mail;
-        $this->password = $password;
-    }
+    // public function __construct($name, $mail, $password)
+    // {
+    //     $this->name = $name;
+    //     $this->mail = $mail;
+    //     $this->password = $password;
+    // }
 
     public function ValidateUserData($conn)
     {
@@ -81,6 +84,6 @@ class User
             throw new Exception("No se encontró el usuario.");
         }
 
-        return new User($data["name"], $data["mail"], $data["password"]);
+        return true;
     }
 }
