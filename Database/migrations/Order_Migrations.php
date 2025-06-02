@@ -18,8 +18,8 @@ $query = "CREATE TABLE IF NOT EXISTS `Order` (
         id INT AUTO_INCREMENT PRIMARY KEY,
         discount_id INT NULL,
         user_id INT NOT NULL,
-        date DATE NOT NULL,
         total_price DECIMAL(10,2) NOT NULL
+        date DATE NOT NULL,
     )";
 
 if ($conn->query($query) === TRUE) {

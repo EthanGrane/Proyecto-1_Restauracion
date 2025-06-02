@@ -3,7 +3,6 @@
 class Product
 {
     public int $id;
-    public ?int $discount_id;
     public string $name;
     public ?string $description;
     public string $product_type;

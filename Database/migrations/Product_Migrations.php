@@ -15,8 +15,8 @@ if ($conn->connect_error) {
 
 $query = "CREATE TABLE IF NOT EXISTS Product (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    discount_id INT NULL,
     name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NULL,
     price DOUBLE NOT NULL,
     product_type VARCHAR(100) NOT NULL,
     enabled Boolean NOT NULL

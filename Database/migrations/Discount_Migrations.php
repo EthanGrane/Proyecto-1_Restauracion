@@ -18,6 +18,7 @@ $query = "CREATE TABLE IF NOT EXISTS Discount (
     discount_code VARCHAR(45) NOT NULL,
     discount_type INT NOT NULL,
     value FLOAT NOT NULL
+    valid INT NOT NULL
 );
 ";
 
