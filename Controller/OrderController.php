@@ -16,12 +16,12 @@ class OrderController
         $discountDao = new DiscountDAO();
 
         // Recoje toda la informacion sobre los productos. (mismo codigo que en Cart.php seccion try{})
-        $cartItems = [];
+        $cartProducts = [];
         $cartData = $productDao->GetProductsDataByIDs($productIdsArray);
         foreach ($productIdsArray as $productId) {
             for ($i = 0; $i < count($cartData); $i++) {
-                if ($productId == $cartData[$i]["id"]) {
-                    array_push($cartItems, $cartData[$i]);
+                if ($productId == $cartData[$i]->id) {
+                    array_push($cartProducts, $cartData[$i]);
                     continue;
                 }
             }
@@ -29,8 +29,8 @@ class OrderController
 
         // Calcula el precio total antes del IVA
         $totalPrice = 0.0;
-        for ($i = 0; $i < count($cartItems); $i++) {
-            $sum = $cartItems[$i]["price"];
+        for ($i = 0; $i < count($cartProducts); $i++) {
+            $sum = $cartProducts[$i]->price;
             $totalPrice += $sum;
             echo ("Total Price += $sum");
         }

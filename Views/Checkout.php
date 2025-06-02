@@ -69,9 +69,9 @@
                     <p>Subtotal: </p>
                 </div>
 
-                <?php foreach ($cartItems as $item): ?>
+                <?php foreach ($cartItems as $product): ?>
                     <div class='d-flex justify-content-end'>
-                        <p><?= number_format($item['price'], 2, '.', '') ?> €</p>
+                        <p><?= number_format($product->price, 2, '.', '') ?> €</p>
                     </div>
                 <?php endforeach; ?>
 

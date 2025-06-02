@@ -126,17 +126,17 @@ class CartController
             $productDao = new ProductDAO();
             $discountDao = new DiscountDAO();
 
-            $cartData = $productDao->GetProductsDataByIDs($cart);
+            $cartProducts = $productDao->GetProductsDataByIDs($cart);
 
             if ($discountCode != "") {
                 $discountData = $discountDao->GetDiscountDataByCode($discountCode);
             }
 
             foreach ($cart as $productId) {
-                foreach ($cartData as $data) {
-                    if ($productId == $data["id"]) {
-                        $cartItems[] = $data;
-                        $totalPrice += $data["price"];
+                foreach ($cartProducts as $product) {
+                    if ($productId == $product->id) {
+                        $cartItems[] = $product;
+                        $totalPrice += $product->price;
                         break;
                     }
                 }

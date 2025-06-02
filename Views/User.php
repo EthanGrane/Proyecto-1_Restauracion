@@ -54,7 +54,7 @@
                         <ul>
                             <?php foreach ($userOrders[$i]["products"] as $product): ?>
                                 <li>
-                                    <?= htmlspecialchars($product['name']) ?> - <?= htmlspecialchars($product['price']) ?> €
+                                    <?= htmlspecialchars($product->name) ?> - <?= htmlspecialchars($product->price) ?> €
                                 </li>
                             <?php endforeach; ?>
 
