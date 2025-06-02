@@ -27,8 +27,8 @@ class User
         $stmt->bind_param("s", $this->mail);
         $stmt->execute();
         $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $count = $row['count'];
+        $user = $result->fetch_object('User');
+        $count = $user['count'];
 
         $stmt->close();
 
