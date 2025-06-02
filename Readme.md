@@ -1,3 +1,5 @@
+# How to run?
+
 # Base de datos
 
 ## Migrations
@@ -9,4 +11,10 @@ php .\Database\migrations.php
 ## Seeders
 ```bash
 php .\Database\seeders.php
+```
+
+# PHP Server
+
+```bash
+php -S localhost:3000
 ```
