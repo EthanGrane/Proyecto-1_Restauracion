@@ -85,8 +85,8 @@ class CartController
     {
         $discountCode = $_POST["discountCode"];
         if ($discountCode != "") {
-            $dao = new DAO();
-            $isValid = $dao->IsDiscountCodeValid($discountCode);
+            $discountDao = new DiscountDAO();
+            $isValid = $discountDao->IsDiscountCodeValid($discountCode);
 
             if (!$isValid) {
                 SessionManager::SetException("Código de descuento no es válido.");
@@ -144,10 +144,10 @@ class CartController
 
             // Cálculo de descuento
             if (!empty($discountCode) && isset($discountData)) {
-                if ($discountData["discount_type"] == 0) {
-                    $discountValue = number_format($totalPrice * ($discountData["value"] / 100), 2, '.', '');
-                } elseif ($discountData["discount_type"] == 1) {
-                    $discountValue = number_format($discountData["value"], 2, '.', '');
+                if ($discountData->discount_type == 0) {
+                    $discountValue = number_format($totalPrice * ($discountData->value / 100), 2, '.', '');
+                } elseif ($discountData->discount_type == 1) {
+                    $discountValue = number_format($discountData->value, 2, '.', '');
                 }
             }
 

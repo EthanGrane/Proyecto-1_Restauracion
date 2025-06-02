@@ -47,29 +47,31 @@ class OrderController
             $discountData = $discountDao->GetDiscountDataByCode($discountCode);
             $discountValue = 0.0;
 
-            echo ("Discount product_type:" . $discountData["discount_type"]);
-            echo ("Discount Value:" . $discountData["value"]);
+            echo ("Discount product_type:" . $discountData->discount_type);
+            echo ("Discount Value:" . $discountData->value);
 
-            if ($discountData["discount_type"] == 0) {
+            if ($discountData->discount_type == 0) {
                 // Descuento en porcentaje
-                $discountValue = $total_price * ($discountData["value"] * 0.01);
+                $discountValue = $total_price * ($discountData->value * 0.01);
                 $discountValue = number_format($discountValue, 2, '.', '');
-            } elseif ($discountData["discount_type"] == 1) {
+            } elseif ($discountData->discount_type == 1) {
                 // Descuento fijo
-                $discountValue = $discountData["value"];
+                $discountValue = $discountData->value;
                 $discountValue = number_format($discountValue, 2, '.', '');
             }
 
             // Aplica el descuento al precio con IVA
             $total_price -= $discountValue;
             echo ("Final Price with discount: $total_price");
-        } else {
-            $discountData["id"] = null;
+        }
+        else
+        {
+            $discountData = null;
         }
 
         $total_price = number_format($total_price, 2, '.', '');
 
-        $orderId = $orderDao->CreateOrder($userID, $discountData["id"], $total_price, $date);
+        $orderId = $orderDao->CreateOrder($userID, $discountData->id, $total_price, $date);
 
         // Inserta los productos en la orden
         for ($i = 0; $i < count($productIdsArray); $i++) {

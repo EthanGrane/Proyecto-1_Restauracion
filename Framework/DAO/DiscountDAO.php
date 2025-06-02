@@ -1,5 +1,7 @@
 <?php
 
+require_once("Model/Discount.php");
+
 class DiscountDAO
 {
     private $conn;
@@ -57,8 +59,8 @@ class DiscountDAO
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            $data = $result->fetch_assoc();
-            if ($data["valid"] == 1)
+            $discounts = $result->fetch_object('Discount');
+            if ($discounts->valid == 1)
                 return true;
 
             return false;
@@ -75,8 +77,8 @@ class DiscountDAO
             $stmt->execute();
             $result = $stmt->get_result();
 
-            $data = $result->fetch_assoc();
-            return $data;
+            $discount = $result->fetch_object('Discount');
+            return $discount;
         }
 
         return null;
@@ -90,8 +92,8 @@ class DiscountDAO
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $data = $result->fetch_assoc();
-        return $data;
+        $discount = $result->fetch_object('Discount');
+        return $discount;
     }
 
     public function GetAllDiscounts()
@@ -104,10 +106,10 @@ class DiscountDAO
 
         $result = $stmt->get_result();
 
-        $data = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : null;
-        $this->DebugPrint("[GetAllDiscounts]: " . print_r($data, true));
+        $discounts = $result->num_rows > 0 ? $result->fetch_object('Discount') : null;
+        $this->DebugPrint("[GetAllDiscounts]: " . print_r($discounts, true));
 
-        return $data;
+        return $discounts;
     }
 
     public function CreateDiscount($discountCode, $discountAmount, $discountType, $discountValid)

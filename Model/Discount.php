@@ -6,6 +6,7 @@ class Discount
     public string $discount_code;
     public string $discount_type;
     public float $value;
+    public ?int $valid;
 
 }
 ?>

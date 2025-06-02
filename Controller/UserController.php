@@ -44,10 +44,10 @@ class UserController
                     $discount = $discountDao->GetDiscountDataById($order->discount_id);
 
                     if (is_array($discount)) {
-                        if ($discount["discount_type"] == 0) {
-                            $discountValue = number_format($order->total_price * ($discount["value"] * 0.01), 2, '.', '');
-                        } elseif ($discount["discount_type"] == 1) {
-                            $discountValue = number_format($discount["value"], 2, '.', '');
+                        if ($discount->discount_type == 0) {
+                            $discountValue = number_format($order->total_price * ($discount->value * 0.01), 2, '.', '');
+                        } elseif ($discount->discount_type == 1) {
+                            $discountValue = number_format($discount->value, 2, '.', '');
                         }
                     }
                 }
