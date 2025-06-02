@@ -1,5 +1,8 @@
 <?php
 
+require_once("Model/User.php");
+require_once("Model/Order.php");
+
 class OrderDAO
 {
     private $conn;
@@ -49,14 +52,14 @@ class OrderDAO
         $result = $stmt->get_result();
 
 
-        $data = [];
-        while ($row = $result->fetch_assoc()) {
-            $data[] = $row;
+        $orders = [];
+        while ($row = $result->fetch_object('Order')) {
+            $orders[] = $row;
         }
 
         $stmt->close();
 
-        return $data;
+        return $orders;
     }
 
     public function CreateOrderProduct($productID, $orderID)
