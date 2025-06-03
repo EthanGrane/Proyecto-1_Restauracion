@@ -48,7 +48,7 @@ class ProductDAO
 
         $product_type = in_array($type_param, $WHITELIST) ? $type_param : "Primary";
 
-        $query = "SELECT * FROM product WHERE enabled = 0 AND product_type = ? LIMIT 100";
+        $query = "SELECT * FROM product WHERE enabled = 1 AND product_type = ? LIMIT 100";
 
         $stmt = $this->conn->prepare($query);
 
